@@ -48,6 +48,14 @@ const TripDetails = () => {
     fetchTripDetails();
   }, [id]);
 
+  const formatINR = (amount) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   const fetchTripDetails = async () => {
     try {
       const response = await tripAPI.getById(id);
@@ -134,7 +142,7 @@ const TripDetails = () => {
                 <FiCalendar /> {trip.days} days
               </span>
               <span className="flex items-center gap-1">
-                <FiDollarSign /> ${trip.estimatedCost?.toLocaleString()}
+                <FiDollarSign /> {formatINR(trip.estimatedCost)}
               </span>
               <span className="flex items-center gap-1">
                 <FiMapPin /> {trip.travelStyle} travel
@@ -331,30 +339,30 @@ const TripDetails = () => {
               <div className="flex justify-between">
                 <span>Accommodation</span>
                 <span className="font-semibold">
-                  ${itinerary.estimatedBudget.accommodation}
+                  {formatINR(itinerary.estimatedBudget.accommodation)}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Food</span>
                 <span className="font-semibold">
-                  ${itinerary.estimatedBudget.food}
+                  {formatINR(itinerary.estimatedBudget.food)}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Activities</span>
                 <span className="font-semibold">
-                  ${itinerary.estimatedBudget.activities}
+                  {formatINR(itinerary.estimatedBudget.activities)}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Transport</span>
                 <span className="font-semibold">
-                  ${itinerary.estimatedBudget.transport}
+                  {formatINR(itinerary.estimatedBudget.transport)}
                 </span>
               </div>
               <div className="border-t pt-2 flex justify-between font-bold">
                 <span>Total</span>
-                <span>${itinerary.estimatedBudget.total}</span>
+                <span>{formatINR(itinerary.estimatedBudget.total)}</span>
               </div>
             </div>
           )}

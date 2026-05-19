@@ -1,4 +1,3 @@
-// src/pages/CreateTrip.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -18,10 +17,11 @@ const CreateTrip = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     destination: "",
-    days: 3,
-    budget: 1000,
+    days: 2,
+    budget: 10000, // Default budget in INR
     travelStyle: "moderate",
     interests: [],
+    currency: "INR",
   });
 
   const travelStyles = [
@@ -30,18 +30,21 @@ const CreateTrip = () => {
       label: "Luxury",
       icon: "👑",
       color: "from-yellow-500 to-orange-500",
+      minBudget: 50000,
     },
     {
       value: "moderate",
       label: "Moderate",
       icon: "⭐",
       color: "from-blue-500 to-cyan-500",
+      minBudget: 10000,
     },
     {
       value: "budget",
       label: "Budget",
       icon: "💰",
       color: "from-green-500 to-emerald-500",
+      minBudget: 5000,
     },
   ];
 
@@ -67,6 +70,21 @@ const CreateTrip = () => {
     }));
   };
 
+  const handleTravelStyleChange = (style) => {
+    const selectedStyle = travelStyles.find((s) => s.value === style);
+    let newBudget = formData.budget;
+
+    // Suggest budget based on travel style
+    if (selectedStyle && formData.budget < selectedStyle.minBudget) {
+      newBudget = selectedStyle.minBudget;
+      toast.info(
+        `${style.charAt(0).toUpperCase() + style.slice(1)} style typically starts from ₹${selectedStyle.minBudget.toLocaleString("en-IN")}`,
+      );
+    }
+
+    setFormData({ ...formData, travelStyle: style, budget: newBudget });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -75,9 +93,17 @@ const CreateTrip = () => {
       return;
     }
 
+    if (formData.budget < 1000) {
+      toast.error("Budget should be at least ₹1,000 for a meaningful trip");
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await tripAPI.generate(formData);
+      const response = await tripAPI.generate({
+        ...formData,
+        currency: "INR",
+      });
       toast.success("Trip generated successfully!");
       navigate(`/trip/${response.data.trip._id}`);
     } catch (error) {
@@ -85,6 +111,15 @@ const CreateTrip = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Format budget display
+  const formatBudget = (value) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(value);
   };
 
   return (
@@ -98,7 +133,8 @@ const CreateTrip = () => {
           Create Your Dream Trip
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Let AI plan the perfect itinerary tailored just for you
+          Let AI plan the perfect itinerary tailored just for you (All costs in
+          ₹ INR)
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -115,7 +151,7 @@ const CreateTrip = () => {
                 setFormData({ ...formData, destination: e.target.value })
               }
               className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 transition-all"
-              placeholder="e.g., Paris, Tokyo, New York"
+              placeholder="e.g., Manali, Goa, Jaipur, Paris, Tokyo"
               required
             />
           </div>
@@ -144,19 +180,54 @@ const CreateTrip = () => {
             <div>
               <label className="block text-sm font-medium mb-2 flex items-center gap-2">
                 <FiDollarSign className="text-yellow-600" />
-                Budget (USD)
+                Budget (₹ INR)
               </label>
-              <input
-                type="number"
-                min="100"
-                max="100000"
-                value={formData.budget}
-                onChange={(e) =>
-                  setFormData({ ...formData, budget: parseInt(e.target.value) })
-                }
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 transition-all"
-                required
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                  ₹
+                </span>
+                <input
+                  type="number"
+                  min="1000"
+                  max="5000000"
+                  value={formData.budget}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      budget: parseInt(e.target.value),
+                    })
+                  }
+                  className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 transition-all"
+                  required
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Current budget: {formatBudget(formData.budget)} for{" "}
+                {formData.days} days (≈{" "}
+                {Math.round(formData.budget / formData.days).toLocaleString(
+                  "en-IN",
+                )}{" "}
+                ₹/day)
+              </p>
+            </div>
+          </div>
+
+          {/* Budget Range Indicator */}
+          <div className="bg-gray-100 dark:bg-gray-700 rounded-xl p-4">
+            <p className="text-sm font-medium mb-2">Budget Range (₹ INR):</p>
+            <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
+              <span>Budget (₹5k-10k)</span>
+              <span>Moderate (₹10k-₹50k)</span>
+              <span>Luxury (₹50k+)</span>
+            </div>
+            <div className="mt-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-green-500 via-blue-500 to-yellow-500 rounded-full"
+                style={{
+                  width: `${Math.min(100, (formData.budget / 100000) * 100)}%`,
+                  transition: "width 0.3s ease",
+                }}
+              ></div>
             </div>
           </div>
 
@@ -171,9 +242,7 @@ const CreateTrip = () => {
                 <button
                   key={style.value}
                   type="button"
-                  onClick={() =>
-                    setFormData({ ...formData, travelStyle: style.value })
-                  }
+                  onClick={() => handleTravelStyleChange(style.value)}
                   className={`relative p-4 rounded-xl border-2 transition-all ${
                     formData.travelStyle === style.value
                       ? `bg-gradient-to-r ${style.color} text-white border-transparent shadow-lg scale-105`
@@ -182,6 +251,9 @@ const CreateTrip = () => {
                 >
                   <div className="text-2xl mb-2">{style.icon}</div>
                   <div className="font-semibold">{style.label}</div>
+                  <div className="text-xs mt-1 opacity-80">
+                    From ₹{style.minBudget.toLocaleString("en-IN")}
+                  </div>
                 </button>
               ))}
             </div>
@@ -223,7 +295,7 @@ const CreateTrip = () => {
                 Generating Your Trip...
               </span>
             ) : (
-              "Generate AI Itinerary"
+              "Generate AI Itinerary (₹ INR)"
             )}
           </button>
         </form>
@@ -236,14 +308,15 @@ const CreateTrip = () => {
         transition={{ delay: 0.2 }}
         className="glass-card p-6"
       >
-        <h3 className="text-lg font-semibold mb-3">✨ Pro Tips</h3>
+        <h3 className="text-lg font-semibold mb-3">💡 INR Budget Tips</h3>
         <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+          <li>• Domestic trips in India: ₹2,000-5,000 per day</li>
           <li>
-            • Be specific about your destination for better recommendations
+            • International trips (Southeast Asia): ₹10,000-50,000 per day
           </li>
-          <li>• Select interests that match your travel style</li>
-          <li>• Higher budget allows for more premium suggestions</li>
-          <li>• The AI will create a detailed day-by-day itinerary</li>
+          <li>• International trips (Europe/USA): ₹50,000-1,50,000 per day</li>
+          <li>• Luxury stays in India: ₹5,000-20,000 per night</li>
+          <li>• Budget hostels: ₹500-1,500 per night</li>
         </ul>
       </motion.div>
     </div>

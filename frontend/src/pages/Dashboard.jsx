@@ -41,6 +41,14 @@ const Dashboard = () => {
     fetchTrips();
   }, []);
 
+  const formatINR = (amount) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   const fetchTrips = async () => {
     try {
       const response = await tripAPI.getAll();
@@ -85,7 +93,7 @@ const Dashboard = () => {
   // Sample chart data
   const budgetData = trips.slice(0, 5).map((trip) => ({
     name: trip.destination.substring(0, 10),
-    budget: trip.estimatedCost || 0,
+    budget: formatINR(trip.estimatedCost) || 0,
     days: trip.days,
   }));
 
@@ -138,9 +146,7 @@ const Dashboard = () => {
 
         <motion.div whileHover={{ scale: 1.05 }} className="glass-card p-6">
           <FiDollarSign className="text-3xl text-green-600 mb-3" />
-          <h3 className="text-2xl font-bold">
-            ${stats.totalBudget.toLocaleString()}
-          </h3>
+          <h3 className="text-2xl font-bold">{formatINR(stats.totalBudget)}</h3>
           <p className="text-gray-600 dark:text-gray-400">Total Budget</p>
         </motion.div>
 

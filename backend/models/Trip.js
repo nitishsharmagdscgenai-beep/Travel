@@ -15,6 +15,11 @@ const tripSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  currency: {
+    type: String,
+    default: 'INR',
+    enum: ['INR', 'USD', 'EUR', 'GBP']
+  },
   days: {
     type: Number,
     required: true,

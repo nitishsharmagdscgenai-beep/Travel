@@ -14,7 +14,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const tripAPI = {
-  generate: (data) => api.post("/trips/generate", data),
+  generate: (data) => api.post("/trips/generate", { ...data, currency: "INR" }),
   getAll: () => api.get("/trips"),
   getById: (id) => api.get(`/trips/${id}`),
   update: (id, data) => api.put(`/trips/${id}`, data),
