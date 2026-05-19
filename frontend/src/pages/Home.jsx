@@ -37,7 +37,7 @@ const Home = () => {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-gradient"></div>
 
-        <div className="relative max-w-7xl mx-auto px-6 py-24">
+        <div className="relative max-w-8xl mx-auto px-6 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

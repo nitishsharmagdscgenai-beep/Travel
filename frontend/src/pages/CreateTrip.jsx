@@ -29,21 +29,21 @@ const CreateTrip = () => {
       value: "luxury",
       label: "Luxury",
       icon: "👑",
-      color: "from-yellow-500 to-orange-500",
+      color: "from-green-700 to-green-800",
       minBudget: 50000,
     },
     {
       value: "moderate",
       label: "Moderate",
       icon: "⭐",
-      color: "from-blue-500 to-cyan-500",
+      color: "from-green-500 to-green-600",
       minBudget: 10000,
     },
     {
       value: "budget",
       label: "Budget",
       icon: "💰",
-      color: "from-green-500 to-emerald-500",
+      color: "from-green-400 to-green-500",
       minBudget: 5000,
     },
   ];
@@ -141,7 +141,7 @@ const CreateTrip = () => {
           {/* Destination */}
           <div>
             <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-              <FiMapPin className="text-blue-600" />
+              <FiMapPin className="text-gray-600" />
               Destination
             </label>
             <input
@@ -160,7 +160,7 @@ const CreateTrip = () => {
             {/* Days */}
             <div>
               <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                <FiCalendar className="text-green-600" />
+                <FiCalendar className="text-gray-600" />
                 Number of Days
               </label>
               <input
@@ -179,7 +179,7 @@ const CreateTrip = () => {
             {/* Budget */}
             <div>
               <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                <FiDollarSign className="text-yellow-600" />
+                <FiDollarSign className="text-gray-600" />
                 Budget (₹ INR)
               </label>
               <div className="relative">
@@ -222,7 +222,7 @@ const CreateTrip = () => {
             </div>
             <div className="mt-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-green-500 via-blue-500 to-yellow-500 rounded-full"
+                className="h-full bg-green-600 rounded-full"
                 style={{
                   width: `${Math.min(100, (formData.budget / 100000) * 100)}%`,
                   transition: "width 0.3s ease",
@@ -234,7 +234,7 @@ const CreateTrip = () => {
           {/* Travel Style */}
           <div>
             <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-              <FiCompass className="text-purple-600" />
+              <FiCompass className="text-gray-600" />
               Travel Style
             </label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -262,7 +262,7 @@ const CreateTrip = () => {
           {/* Interests */}
           <div>
             <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-              <FiHeart className="text-red-600" />
+              <FiHeart className="text-gray-600" />
               Interests
             </label>
             <div className="flex flex-wrap gap-3">
@@ -273,8 +273,8 @@ const CreateTrip = () => {
                   onClick={() => handleInterestToggle(interest)}
                   className={`px-4 py-2 rounded-full transition-all ${
                     formData.interests.includes(interest)
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md scale-105"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                      ? "bg-green-600 text-white shadow-sm"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-950/20"
                   }`}
                 >
                   {interest}

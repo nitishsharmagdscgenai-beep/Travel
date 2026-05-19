@@ -78,7 +78,7 @@ const Profile = () => {
               {user?.name?.charAt(0).toUpperCase()}
             </div>
             <button className="absolute bottom-0 right-0 p-2 bg-white dark:bg-gray-800 rounded-full shadow-lg">
-              <FiEdit2 className="text-blue-600" />
+              <FiEdit2 className="text-gray-600" />
             </button>
           </div>
 
