@@ -68,7 +68,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       <>
         <button
           onClick={toggleSidebar}
-          className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-white dark:bg-black shadow-sm border border-gray-200 dark:border-gray-800 hover:border-green-500 dark:hover:border-green-500 transition-all md:hidden"
+          className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-white dark:bg-black shadow-sm border border-gray-200 dark:border-gray-800 hover:border-green-500 transition-all md:hidden"
         >
           <FiMenu className="text-xl text-gray-700 dark:text-gray-300" />
         </button>
@@ -161,7 +161,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           >
             TravelAI
           </motion.div>
-
           <button
             onClick={toggleSidebar}
             className="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-all absolute -right-3 top-6 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 shadow-sm"

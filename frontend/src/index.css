@@ -10,27 +10,27 @@
 }
 
 @layer components {
-  /* Glass Card - Premium */
+  /* Glass Card */
   .glass-card {
     @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 
            dark:bg-black/90 dark:border-gray-800
            transition-all duration-300 hover:shadow-md;
   }
 
-  /* Gradient Text - Subtle Green */
+  /* Gradient Text */
   .gradient-text {
     @apply bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent
            dark:from-green-400 dark:to-green-500;
   }
 
-  /* Primary Button - Green */
+  /* Primary Button */
   .btn-primary {
     @apply px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl 
            font-medium transition-all duration-300 disabled:opacity-50 
            disabled:cursor-not-allowed shadow-sm hover:shadow-md;
   }
 
-  /* Secondary Button - Outline Green */
+  /* Secondary Button */
   .btn-secondary {
     @apply px-6 py-3 bg-transparent border-2 border-green-600 text-green-600 
            dark:border-green-500 dark:text-green-400 rounded-xl font-medium 
@@ -50,12 +50,6 @@
     @apply px-3 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 
            dark:bg-green-950/30 dark:text-green-400 border border-green-200 
            dark:border-green-800;
-  }
-
-  /* Card Hover */
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-md hover:border-green-200 
-           dark:hover:border-green-800;
   }
 }
 
@@ -86,19 +80,6 @@
   /* Focus Ring */
   *:focus-visible {
     @apply outline-none ring-1 ring-green-500 ring-offset-1;
-  }
-
-  /* Shadow Utilities */
-  .shadow-premium {
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.05),
-      0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-
-  .shadow-premium-hover {
-    box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.05),
-      0 2px 4px -1px rgba(0, 0, 0, 0.05);
   }
 }
 
