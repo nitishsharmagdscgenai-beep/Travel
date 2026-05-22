@@ -19,6 +19,7 @@ import {
 } from "react-icons/fi";
 import { tripAPI, weatherAPI } from "../services/api";
 import toast from "react-hot-toast";
+import "../styles/pages/TripDetails.css";
 
 // Fix for default marker icons in Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -30,19 +31,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
-
-// Component to handle theme-based map tiles
-const MapTheme = () => {
-  const map = useMap();
-  const isDark = document.documentElement.classList.contains("dark");
-
-  useEffect(() => {
-    // You can change tile layer based on theme if needed
-    console.log("Theme changed:", isDark ? "dark" : "light");
-  }, [isDark]);
-
-  return null;
-};
 
 // Simple geocoding function
 const getCoordinates = (destination) => {
@@ -144,11 +132,9 @@ const TripDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-500">Loading trip details...</p>
-        </div>
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading trip details...</p>
       </div>
     );
   }
@@ -159,48 +145,37 @@ const TripDetails = () => {
   const dailyItinerary = itinerary?.dailyItinerary || [];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-8">
-      {/* Header - Same as before */}
+    <div className="trip-details-container">
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm"
+        className="trip-header"
       >
-        <div className="flex justify-between items-start flex-wrap gap-4">
+        <div className="trip-header-content">
           <div>
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="mb-4 flex items-center gap-2 text-gray-500 hover:text-green-600 transition-colors text-sm"
-            >
+            <button onClick={() => navigate("/dashboard")} className="back-btn">
               <FiArrowLeft size={16} /> Back to Dashboard
             </button>
-            <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">
-              {trip.destination}
-            </h1>
-            <div className="flex flex-wrap gap-4 mt-2 text-gray-500 dark:text-gray-400 text-sm">
-              <span className="flex items-center gap-1">
+            <h1 className="trip-title">{trip.destination}</h1>
+            <div className="trip-meta">
+              <span>
                 <FiCalendar size={14} /> {trip.days} days
               </span>
-              <span className="flex items-center gap-1">
+              <span>
                 <FiDollarSign size={14} />{" "}
                 {formatINR(trip.estimatedCost || trip.budget)}
               </span>
-              <span className="flex items-center gap-1">
+              <span>
                 <FiMapPin size={14} /> {trip.travelStyle} travel
               </span>
             </div>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleExport}
-              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-green-500 hover:text-green-600 transition-all flex items-center gap-2 text-sm"
-            >
+          <div className="trip-actions">
+            <button onClick={handleExport} className="export-btn">
               <FiDownload size={14} /> Export
             </button>
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all flex items-center gap-2 text-sm"
-            >
+            <button onClick={handleDelete} className="delete-btn">
               <FiTrash2 size={14} /> Delete
             </button>
           </div>
@@ -213,36 +188,31 @@ const TripDetails = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm"
+          className="weather-card"
         >
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
-            <FiSun className="text-gray-600" /> Current Weather in{" "}
-            {weather.city}
+          <h2 className="section-title">
+            <FiSun className="section-icon" /> Current Weather in {weather.city}
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-3 rounded-lg bg-gray-50 dark:bg-gray-900">
-              <div className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <div className="weather-grid">
+            <div className="weather-item">
+              <div className="weather-value">
                 {Math.round(weather.temperature)}°C
               </div>
-              <div className="text-xs text-gray-500 mt-1">Temperature</div>
+              <div className="weather-label">Temperature</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-gray-50 dark:bg-gray-900">
-              <div className="text-2xl font-semibold text-gray-900 dark:text-white">
-                {weather.humidity}%
-              </div>
-              <div className="text-xs text-gray-500 mt-1">Humidity</div>
+            <div className="weather-item">
+              <div className="weather-value">{weather.humidity}%</div>
+              <div className="weather-label">Humidity</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-gray-50 dark:bg-gray-900">
-              <div className="text-2xl font-semibold text-gray-900 dark:text-white">
-                {weather.windSpeed} m/s
-              </div>
-              <div className="text-xs text-gray-500 mt-1">Wind Speed</div>
+            <div className="weather-item">
+              <div className="weather-value">{weather.windSpeed} m/s</div>
+              <div className="weather-label">Wind Speed</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-gray-50 dark:bg-gray-900">
-              <div className="text-xl font-semibold text-gray-900 dark:text-white capitalize">
+            <div className="weather-item">
+              <div className="weather-value capitalize">
                 {weather.condition}
               </div>
-              <div className="text-xs text-gray-500 mt-1">Condition</div>
+              <div className="weather-label">Condition</div>
             </div>
           </div>
         </motion.div>
@@ -253,27 +223,20 @@ const TripDetails = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm"
+        className="itinerary-card"
       >
-        <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
-          Your Travel Itinerary
-        </h2>
-        <div className="space-y-4">
+        <h2 className="section-title">Your Travel Itinerary</h2>
+        <div className="itinerary-list">
           {dailyItinerary.map((day, idx) => (
-            <div
-              key={idx}
-              className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden"
-            >
-              <div className="bg-green-600 text-white px-4 py-2">
-                <h3 className="font-semibold">Day {day.day || idx + 1}</h3>
-              </div>
-              <div className="p-4 space-y-3">
+            <div key={idx} className="itinerary-day">
+              <div className="day-header">Day {day.day || idx + 1}</div>
+              <div className="day-content">
                 {day.activities && day.activities.length > 0 && (
-                  <div>
-                    <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                  <div className="day-section">
+                    <h4>
                       <FiClock size={14} /> Activities
                     </h4>
-                    <ul className="list-disc list-inside ml-2 text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                    <ul>
                       {day.activities.map((activity, i) => (
                         <li key={i}>{activity}</li>
                       ))}
@@ -281,11 +244,11 @@ const TripDetails = () => {
                   </div>
                 )}
                 {day.meals && day.meals.length > 0 && (
-                  <div>
-                    <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                  <div className="day-section">
+                    <h4>
                       <FiCoffee size={14} /> Meals
                     </h4>
-                    <ul className="list-disc list-inside ml-2 text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                    <ul>
                       {day.meals.map((meal, i) => (
                         <li key={i}>{meal}</li>
                       ))}
@@ -293,23 +256,19 @@ const TripDetails = () => {
                   </div>
                 )}
                 {day.accommodation && (
-                  <div>
-                    <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
+                  <div className="day-section">
+                    <h4>
                       <FiHome size={14} /> Accommodation
                     </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 ml-6">
-                      {day.accommodation}
-                    </p>
+                    <p>{day.accommodation}</p>
                   </div>
                 )}
                 {day.transport && (
-                  <div>
-                    <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
+                  <div className="day-section">
+                    <h4>
                       <FiMap size={14} /> Transport
                     </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 ml-6">
-                      {day.transport}
-                    </p>
+                    <p>{day.transport}</p>
                   </div>
                 )}
               </div>
@@ -319,23 +278,21 @@ const TripDetails = () => {
       </motion.div>
 
       {/* Recommendations Section */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="recommendations-grid">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm"
+          className="recommendation-card"
         >
-          <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
+          <h3>
             <FiCamera /> Recommended Places
           </h3>
-          <ul className="space-y-2">
+          <ul>
             {itinerary?.recommendedPlaces?.map((place, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm">
-                <span className="text-green-600 mt-1">•</span>
-                <span className="text-gray-600 dark:text-gray-400">
-                  {place}
-                </span>
+              <li key={idx}>
+                <span className="bullet">•</span>
+                <span>{place}</span>
               </li>
             ))}
           </ul>
@@ -345,16 +302,16 @@ const TripDetails = () => {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm"
+          className="recommendation-card"
         >
-          <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
+          <h3>
             <FiCoffee /> Food Suggestions
           </h3>
-          <ul className="space-y-2">
+          <ul>
             {itinerary?.foodSuggestions?.map((food, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm">
-                <span className="text-green-600 mt-1">•</span>
-                <span className="text-gray-600 dark:text-gray-400">{food}</span>
+              <li key={idx}>
+                <span className="bullet">•</span>
+                <span>{food}</span>
               </li>
             ))}
           </ul>
@@ -362,21 +319,19 @@ const TripDetails = () => {
       </div>
 
       {/* Travel Tips & Budget */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="tips-budget-grid">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm"
+          className="tips-card"
         >
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-            💡 Travel Tips
-          </h3>
-          <ul className="space-y-2">
+          <h3>💡 Travel Tips</h3>
+          <ul>
             {itinerary?.travelTips?.map((tip, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm">
-                <span className="text-green-600 mt-1">✨</span>
-                <span className="text-gray-600 dark:text-gray-400">{tip}</span>
+              <li key={idx}>
+                <span className="bullet">✨</span>
+                <span>{tip}</span>
               </li>
             ))}
           </ul>
@@ -386,74 +341,53 @@ const TripDetails = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm"
+          className="budget-card"
         >
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-            💰 Budget Breakdown
-          </h3>
+          <h3>💰 Budget Breakdown</h3>
           {itinerary?.estimatedBudget ? (
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Accommodation
-                </span>
-                <span className="font-medium text-gray-900 dark:text-white">
+            <div className="budget-list">
+              <div className="budget-item">
+                <span>Accommodation</span>
+                <span>
                   {formatINR(itinerary.estimatedBudget.accommodation)}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Food</span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {formatINR(itinerary.estimatedBudget.food)}
-                </span>
+              <div className="budget-item">
+                <span>Food</span>
+                <span>{formatINR(itinerary.estimatedBudget.food)}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Activities
-                </span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {formatINR(itinerary.estimatedBudget.activities)}
-                </span>
+              <div className="budget-item">
+                <span>Activities</span>
+                <span>{formatINR(itinerary.estimatedBudget.activities)}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Transport
-                </span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {formatINR(itinerary.estimatedBudget.transport)}
-                </span>
+              <div className="budget-item">
+                <span>Transport</span>
+                <span>{formatINR(itinerary.estimatedBudget.transport)}</span>
               </div>
-              <div className="border-t border-gray-200 dark:border-gray-800 pt-2 flex justify-between font-semibold text-sm">
+              <div className="budget-total">
                 <span>Total</span>
-                <span className="text-green-600">
-                  {formatINR(itinerary.estimatedBudget.total)}
-                </span>
+                <span>{formatINR(itinerary.estimatedBudget.total)}</span>
               </div>
             </div>
           ) : (
-            <p className="text-gray-500 text-sm">
-              Budget breakdown not available
-            </p>
+            <p>Budget breakdown not available</p>
           )}
         </motion.div>
       </div>
 
-      {/* Map Section - Updated with better tile options */}
+      {/* Map Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm"
+        className="map-card"
       >
-        <button
-          onClick={() => setShowMap(!showMap)}
-          className="mb-4 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-green-500 hover:text-green-600 transition-all text-sm"
-        >
+        <button onClick={() => setShowMap(!showMap)} className="map-toggle-btn">
           {showMap ? "Hide Map" : "Show Map"}
         </button>
 
         {showMap && (
-          <div className="h-96 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800">
+          <div className="map-container">
             <MapContainer
               key={mapCoordinates[0]}
               center={mapCoordinates}
@@ -462,35 +396,16 @@ const TripDetails = () => {
               scrollWheelZoom={true}
               zoomControl={true}
             >
-              <MapTheme />
-              {/* Option 1: CartoDB Voyager - Clean and neutral (Recommended) */}
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
               />
-
-              {/* Option 2: Stamen Toner - Black and white, very clean */}
-              {/* <TileLayer
-                attribution='Map tiles by <a href="http://stamen.com">Stamen</a>'
-                url="https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png"
-              /> */}
-
-              {/* Option 3: Stamen Terrain - Subtle colors */}
-              {/* <TileLayer
-                attribution='Map tiles by <a href="http://stamen.com">Stamen</a>'
-                url="https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png"
-              /> */}
-
               <Marker position={mapCoordinates}>
                 <Popup>
-                  <div className="text-center">
-                    <strong className="text-gray-900">
-                      {trip?.destination}
-                    </strong>
+                  <div className="map-popup">
+                    <strong>{trip?.destination}</strong>
                     <br />
-                    <span className="text-sm text-gray-600">
-                      Your dream destination!
-                    </span>
+                    <span>Your dream destination!</span>
                   </div>
                 </Popup>
               </Marker>
@@ -503,4 +418,3 @@ const TripDetails = () => {
 };
 
 export default TripDetails;
-  

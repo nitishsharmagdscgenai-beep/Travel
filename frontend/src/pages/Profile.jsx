@@ -1,4 +1,3 @@
-// src/pages/Profile.jsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
@@ -9,9 +8,13 @@ import {
   FiEdit2,
   FiSave,
   FiX,
+  FiMapPin,
+  FiDollarSign,
+  FiGlobe,
+  FiClock,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
-import api from "../services/api";
+import "../styles/pages/Profile.css";
 
 const Profile = () => {
   const { user, setUser } = useAuth();
@@ -38,22 +41,10 @@ const Profile = () => {
   };
 
   const travelStats = [
-    { label: "Total Trips", value: "12", color: "from-blue-500 to-cyan-500" },
-    {
-      label: "Countries Visited",
-      value: "8",
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      label: "Days Traveled",
-      value: "45",
-      color: "from-green-500 to-emerald-500",
-    },
-    {
-      label: "Budget Spent",
-      value: "$12,450",
-      color: "from-orange-500 to-red-500",
-    },
+    { label: "Total Trips", value: "12", icon: FiMapPin },
+    { label: "Countries Visited", value: "8", icon: FiGlobe },
+    { label: "Days Traveled", value: "45", icon: FiCalendar },
+    { label: "Budget Spent", value: "₹4,50,000", icon: FiDollarSign },
   ];
 
   const recentActivity = [
@@ -64,36 +55,34 @@ const Profile = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="profile-container">
       {/* Profile Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card p-8"
+        className="profile-card"
       >
-        <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+        <div className="profile-header">
           {/* Avatar */}
-          <div className="relative">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
-              {user?.name?.charAt(0).toUpperCase()}
-            </div>
-            <button className="absolute bottom-0 right-0 p-2 bg-white dark:bg-gray-800 rounded-full shadow-lg">
-              <FiEdit2 className="text-gray-600" />
+          <div className="avatar-section">
+            <div className="avatar">{user?.name?.charAt(0).toUpperCase()}</div>
+            <button className="edit-avatar-btn">
+              <FiEdit2 size={16} />
             </button>
           </div>
 
           {/* User Info */}
-          <div className="flex-1 text-center md:text-left">
+          <div className="user-info">
             {isEditing ? (
-              <div className="space-y-3">
+              <div className="edit-form">
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
                   placeholder="Name"
+                  className="edit-input"
                 />
                 <input
                   type="email"
@@ -101,42 +90,40 @@ const Profile = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
                   placeholder="Email"
+                  className="edit-input"
                 />
-                <div className="flex gap-2">
+                <div className="edit-actions">
                   <button
                     onClick={handleUpdate}
                     disabled={loading}
-                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all flex items-center gap-2"
+                    className="save-btn"
                   >
-                    <FiSave /> Save
+                    <FiSave size={16} /> Save
                   </button>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all flex items-center gap-2"
+                    className="cancel-btn"
                   >
-                    <FiX /> Cancel
+                    <FiX size={16} /> Cancel
                   </button>
                 </div>
               </div>
             ) : (
               <>
-                <h1 className="text-3xl font-bold gradient-text">
-                  {user?.name}
-                </h1>
-                <p className="text-gray-600 dark:text-gray-400 flex items-center justify-center md:justify-start gap-2 mt-2">
-                  <FiMail /> {user?.email}
+                <h1 className="user-name">{user?.name}</h1>
+                <p className="user-email">
+                  <FiMail size={14} /> {user?.email}
                 </p>
-                <p className="text-gray-600 dark:text-gray-400 flex items-center justify-center md:justify-start gap-2 mt-1">
-                  <FiCalendar /> Member since{" "}
+                <p className="user-member-since">
+                  <FiCalendar size={14} /> Member since{" "}
                   {new Date(user?.createdAt || Date.now()).toLocaleDateString()}
                 </p>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2"
+                  className="edit-profile-btn"
                 >
-                  <FiEdit2 /> Edit Profile
+                  <FiEdit2 size={16} /> Edit Profile
                 </button>
               </>
             )}
@@ -145,7 +132,7 @@ const Profile = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="stats-grid">
         {travelStats.map((stat, idx) => (
           <motion.div
             key={idx}
@@ -153,10 +140,11 @@ const Profile = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
             whileHover={{ scale: 1.05 }}
-            className={`glass-card p-6 bg-gradient-to-r ${stat.color}`}
+            className="stat-card"
           >
-            <h3 className="text-2xl font-bold text-white">{stat.value}</h3>
-            <p className="text-white/90 mt-2">{stat.label}</p>
+            <stat.icon className="stat-icon" />
+            <h3 className="stat-value">{stat.value}</h3>
+            <p className="stat-label">{stat.label}</p>
           </motion.div>
         ))}
       </div>
@@ -166,22 +154,17 @@ const Profile = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="glass-card p-6"
+        className="activity-card"
       >
-        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-        <div className="space-y-3">
+        <h2 className="section-title">Recent Activity</h2>
+        <div className="activity-list">
           {recentActivity.map((activity, idx) => (
-            <div
-              key={idx}
-              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{activity.icon}</span>
-                <span className="text-gray-700 dark:text-gray-300">
-                  {activity.action}
-                </span>
+            <div key={idx} className="activity-item">
+              <div className="activity-info">
+                <span className="activity-icon">{activity.icon}</span>
+                <span className="activity-action">{activity.action}</span>
               </div>
-              <span className="text-sm text-gray-500">{activity.date}</span>
+              <span className="activity-date">{activity.date}</span>
             </div>
           ))}
         </div>
@@ -192,54 +175,46 @@ const Profile = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="glass-card p-6"
+        className="preferences-card"
       >
-        <h2 className="text-xl font-semibold mb-4">Travel Preferences</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Preferred Travel Style
-            </label>
-            <select className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800">
+        <h2 className="section-title">Travel Preferences</h2>
+        <div className="preferences-grid">
+          <div className="preference-field">
+            <label>Preferred Travel Style</label>
+            <select className="preference-select">
               <option>Moderate</option>
               <option>Luxury</option>
               <option>Budget</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Favorite Destinations
-            </label>
+          <div className="preference-field">
+            <label>Favorite Destinations</label>
             <input
               type="text"
               placeholder="e.g., Paris, Tokyo, Bali"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+              className="preference-input"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Email Notifications
-            </label>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" id="notifications" className="w-4 h-4" />
+          <div className="preference-field">
+            <label>Email Notifications</label>
+            <div className="checkbox-wrapper">
+              <input type="checkbox" id="notifications" />
               <label htmlFor="notifications">
                 Receive travel deals and tips
               </label>
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Currency</label>
-            <select className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800">
+          <div className="preference-field">
+            <label>Currency</label>
+            <select className="preference-select">
+              <option>INR (₹)</option>
               <option>USD ($)</option>
               <option>EUR (€)</option>
               <option>GBP (£)</option>
-              <option>JPY (¥)</option>
             </select>
           </div>
         </div>
-        <button className="mt-4 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all">
-          Save Preferences
-        </button>
+        <button className="save-preferences-btn">Save Preferences</button>
       </motion.div>
     </div>
   );

@@ -10,8 +10,9 @@ import {
 } from "react-icons/fi";
 import { tripAPI } from "../services/api";
 import toast from "react-hot-toast";
+import "../styles/components/TripCard.css";
 
-const TripCard = ({ trip, onDelete }) => {
+const TripCard = ({ trip, onDelete, compact = false }) => {
   const navigate = useNavigate();
 
   const formatINR = (amount) => {
@@ -35,67 +36,98 @@ const TripCard = ({ trip, onDelete }) => {
     }
   };
 
+  if (compact) {
+    return (
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => navigate(`/trip/${trip._id}`)}
+        className="trip-card-compact"
+      >
+        <div className="trip-card-compact-content">
+          <div className="trip-avatar-compact">
+            {trip.destination?.charAt(0).toUpperCase()}
+          </div>
+          <div className="trip-card-compact-info">
+            <h4 className="trip-title-compact">{trip.destination}</h4>
+            <div className="trip-meta-compact">
+              <span>
+                <FiCalendar size={12} /> {trip.days}d
+              </span>
+              <span>
+                <FiDollarSign size={12} />{" "}
+                {formatINR(trip.estimatedCost || trip.budget)}
+              </span>
+            </div>
+          </div>
+          <button onClick={handleDelete} className="delete-btn-compact">
+            <FiTrash2 size={14} />
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => navigate(`/trip/${trip._id}`)}
-      className="glass-card p-5 cursor-pointer group hover:shadow-2xl transition-all duration-300"
+      className="trip-card"
     >
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-lg">
+      {/* Rest of the full card implementation */}
+      <div className="trip-card-header">
+        <div className="trip-card-info">
+          <div className="trip-avatar">
             {trip.destination?.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h3 className="font-semibold text-lg">{trip.destination}</h3>
-            <p className="text-xs text-gray-500">
+            <h3 className="trip-title">{trip.destination}</h3>
+            <p className="trip-date">
               {new Date(trip.createdAt).toLocaleDateString("en-IN")}
             </p>
           </div>
         </div>
         <button
           onClick={handleDelete}
-          className="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all"
+          className="delete-btn"
+          title="Delete trip"
         >
-          <FiTrash2 className="text-red-500" />
+          <FiTrash2 size={16} />
         </button>
       </div>
 
-      <div className="space-y-2 ml-12">
-        <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-          <span className="flex items-center gap-1">
-            <FiCalendar className="text-gray-500" /> {trip.days} days
+      <div className="trip-card-details">
+        <div className="trip-meta">
+          <span className="trip-meta-item">
+            <FiCalendar size={14} /> {trip.days} days
           </span>
-          <span className="flex items-center gap-1">
-            <FiDollarSign className="text-green-500" />{" "}
+          <span className="trip-meta-item">
+            <FiDollarSign size={14} />{" "}
             {formatINR(trip.estimatedCost || trip.budget)}
           </span>
-          <span className="flex items-center gap-1">
-            <FiMapPin className="text-green-600" /> {trip.travelStyle}
+          <span className="trip-meta-item">
+            <FiMapPin size={14} /> {trip.travelStyle}
           </span>
         </div>
 
         {trip.interests && trip.interests.length > 0 && (
-          <div className="flex flex-wrap gap-1">
+          <div className="trip-interests">
             {trip.interests.slice(0, 3).map((interest, idx) => (
-              <span
-                key={idx}
-                className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700"
-              >
+              <span key={idx} className="interest-badge">
                 {interest}
               </span>
             ))}
             {trip.interests.length > 3 && (
-              <span className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700">
+              <span className="interest-badge more">
                 +{trip.interests.length - 3}
               </span>
             )}
           </div>
         )}
 
-        <button className="mt-2 text-sm text-green-600 hover:text-green-700 flex items-center gap-1">
-          <FiEye /> View Details
+        <button className="view-details-btn">
+          <FiEye size={14} /> View Details
         </button>
       </div>
     </motion.div>

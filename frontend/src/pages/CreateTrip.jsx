@@ -3,49 +3,31 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FiMapPin,
-  FiDollarSign,
   FiCalendar,
+  FiDollarSign,
   FiCompass,
   FiHeart,
   FiLoader,
 } from "react-icons/fi";
 import { tripAPI } from "../services/api";
 import toast from "react-hot-toast";
+import "../styles/pages/CreateTrip.css";
 
 const CreateTrip = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     destination: "",
-    days: 2,
-    budget: 10000, // Default budget in INR
+    days: 3,
+    budget: 30000,
     travelStyle: "moderate",
     interests: [],
-    currency: "INR",
   });
 
   const travelStyles = [
-    {
-      value: "luxury",
-      label: "Luxury",
-      icon: "👑",
-      color: "from-green-700 to-green-800",
-      minBudget: 50000,
-    },
-    {
-      value: "moderate",
-      label: "Moderate",
-      icon: "⭐",
-      color: "from-green-500 to-green-600",
-      minBudget: 10000,
-    },
-    {
-      value: "budget",
-      label: "Budget",
-      icon: "💰",
-      color: "from-green-400 to-green-500",
-      minBudget: 5000,
-    },
+    { value: "luxury", label: "Luxury", icon: "👑", minBudget: 80000 },
+    { value: "moderate", label: "Moderate", icon: "⭐", minBudget: 30000 },
+    { value: "budget", label: "Budget", icon: "💰", minBudget: 10000 },
   ];
 
   const interestOptions = [
@@ -70,40 +52,16 @@ const CreateTrip = () => {
     }));
   };
 
-  const handleTravelStyleChange = (style) => {
-    const selectedStyle = travelStyles.find((s) => s.value === style);
-    let newBudget = formData.budget;
-
-    // Suggest budget based on travel style
-    if (selectedStyle && formData.budget < selectedStyle.minBudget) {
-      newBudget = selectedStyle.minBudget;
-      toast.info(
-        `${style.charAt(0).toUpperCase() + style.slice(1)} style typically starts from ₹${selectedStyle.minBudget.toLocaleString("en-IN")}`,
-      );
-    }
-
-    setFormData({ ...formData, travelStyle: style, budget: newBudget });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (formData.interests.length === 0) {
       toast.error("Please select at least one interest");
       return;
     }
 
-    if (formData.budget < 1000) {
-      toast.error("Budget should be at least ₹1,000 for a meaningful trip");
-      return;
-    }
-
     setLoading(true);
     try {
-      const response = await tripAPI.generate({
-        ...formData,
-        currency: "INR",
-      });
+      const response = await tripAPI.generate({ ...formData, currency: "INR" });
       toast.success("Trip generated successfully!");
       navigate(`/trip/${response.data.trip._id}`);
     } catch (error) {
@@ -113,7 +71,6 @@ const CreateTrip = () => {
     }
   };
 
-  // Format budget display
   const formatBudget = (value) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -123,26 +80,17 @@ const CreateTrip = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass-card p-8"
-      >
-        <h1 className="text-3xl font-bold gradient-text mb-2">
-          Create Your Dream Trip
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Let AI plan the perfect itinerary tailored just for you (All costs in
-          ₹ INR)
+    <div className="create-trip-container">
+      <div className="create-trip-card">
+        <h1 className="gradient-text">Create Your Dream Trip</h1>
+        <p className="subtitle">
+          Let AI plan the perfect itinerary tailored just for you
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Destination */}
-          <div>
-            <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-              <FiMapPin className="text-gray-600" />
-              Destination
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>
+              <FiMapPin /> Destination
             </label>
             <input
               type="text"
@@ -150,18 +98,15 @@ const CreateTrip = () => {
               onChange={(e) =>
                 setFormData({ ...formData, destination: e.target.value })
               }
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 transition-all"
               placeholder="e.g., Manali, Goa, Jaipur, Paris, Tokyo"
               required
             />
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Days */}
-            <div>
-              <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                <FiCalendar className="text-gray-600" />
-                Number of Days
+          <div className="form-row">
+            <div className="form-group">
+              <label>
+                <FiCalendar /> Number of Days
               </label>
               <input
                 type="number"
@@ -171,111 +116,86 @@ const CreateTrip = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, days: parseInt(e.target.value) })
                 }
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 transition-all"
                 required
               />
             </div>
 
-            {/* Budget */}
-            <div>
-              <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                <FiDollarSign className="text-gray-600" />
-                Budget (₹ INR)
+            <div className="form-group">
+              <label>
+                <FiDollarSign /> Budget (₹ INR)
               </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                  ₹
-                </span>
-                <input
-                  type="number"
-                  min="1000"
-                  max="5000000"
-                  value={formData.budget}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      budget: parseInt(e.target.value),
-                    })
-                  }
-                  className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 transition-all"
-                  required
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Current budget: {formatBudget(formData.budget)} for{" "}
-                {formData.days} days (≈{" "}
-                {Math.round(formData.budget / formData.days).toLocaleString(
-                  "en-IN",
-                )}{" "}
-                ₹/day)
-              </p>
+              <input
+                type="number"
+                min="10000"
+                max="5000000"
+                value={formData.budget}
+                onChange={(e) =>
+                  setFormData({ ...formData, budget: parseInt(e.target.value) })
+                }
+                required
+              />
+              <small>
+                Current: {formatBudget(formData.budget)} for {formData.days}{" "}
+                days
+              </small>
             </div>
           </div>
 
-          {/* Budget Range Indicator */}
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-xl p-4">
-            <p className="text-sm font-medium mb-2">Budget Range (₹ INR):</p>
-            <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
-              <span>Budget (₹5k-10k)</span>
-              <span>Moderate (₹10k-₹50k)</span>
-              <span>Luxury (₹50k+)</span>
+          {/* After the budget input, add this budget range indicator */}
+          <div className="budget-range">
+            <div className="budget-range-label">
+              <span>Budget Range</span>
+              <span>{formatBudget(formData.budget)}</span>
             </div>
-            <div className="mt-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full overflow-hidden">
+            <div className="budget-bar">
               <div
-                className="h-full bg-green-600 rounded-full"
+                className="budget-bar-fill"
                 style={{
-                  width: `${Math.min(100, (formData.budget / 100000) * 100)}%`,
-                  transition: "width 0.3s ease",
+                  width: `${Math.min(100, (formData.budget / 500000) * 100)}%`,
                 }}
               ></div>
             </div>
+            <div className="budget-range-label" style={{ marginTop: "6px" }}>
+              <span>₹10,000</span>
+              <span>₹5,00,000+</span>
+            </div>
           </div>
 
-          {/* Travel Style */}
-          <div>
-            <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-              <FiCompass className="text-gray-600" />
-              Travel Style
+          <div className="form-group">
+            <label>
+              <FiCompass /> Travel Style
             </label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="styles-grid">
               {travelStyles.map((style) => (
                 <button
                   key={style.value}
                   type="button"
-                  onClick={() => handleTravelStyleChange(style.value)}
-                  className={`relative p-4 rounded-xl border-2 transition-all ${
-                    formData.travelStyle === style.value
-                      ? `bg-gradient-to-r ${style.color} text-white border-transparent shadow-lg scale-105`
-                      : "border-gray-300 dark:border-gray-600 hover:border-blue-500"
-                  }`}
+                  onClick={() =>
+                    setFormData({ ...formData, travelStyle: style.value })
+                  }
+                  className={`style-btn ${formData.travelStyle === style.value ? "active" : ""}`}
                 >
-                  <div className="text-2xl mb-2">{style.icon}</div>
-                  <div className="font-semibold">{style.label}</div>
-                  <div className="text-xs mt-1 opacity-80">
-                    From ₹{style.minBudget.toLocaleString("en-IN")}
+                  <div className="style-icon">{style.icon}</div>
+                  <div className="style-label">{style.label}</div>
+                  <div className="style-budget">
+                    From ₹{style.minBudget.toLocaleString()}
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Interests */}
-          <div>
-            <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-              <FiHeart className="text-gray-600" />
-              Interests
+          <div className="form-group">
+            <label>
+              <FiHeart /> Interests
             </label>
-            <div className="flex flex-wrap gap-3">
+            <div className="interests-grid">
               {interestOptions.map((interest) => (
                 <button
                   key={interest}
                   type="button"
                   onClick={() => handleInterestToggle(interest)}
-                  className={`px-4 py-2 rounded-full transition-all ${
-                    formData.interests.includes(interest)
-                      ? "bg-green-600 text-white shadow-sm"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-950/20"
-                  }`}
+                  className={`interest-btn ${formData.interests.includes(interest) ? "active" : ""}`}
                 >
                   {interest}
                 </button>
@@ -283,42 +203,17 @@ const CreateTrip = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full btn-primary py-4 text-lg disabled:opacity-50"
-          >
+          <button type="submit" disabled={loading} className="submit-btn">
             {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <FiLoader className="animate-spin" />
-                Generating Your Trip...
-              </span>
+              <>
+                <FiLoader className="spinning" /> Generating Your Trip...
+              </>
             ) : (
-              "Generate AI Itinerary (₹ INR)"
+              "Generate AI Itinerary"
             )}
           </button>
         </form>
-      </motion.div>
-
-      {/* Tips Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="glass-card p-6"
-      >
-        <h3 className="text-lg font-semibold mb-3">💡 INR Budget Tips</h3>
-        <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-          <li>• Domestic trips in India: ₹2,000-5,000 per day</li>
-          <li>
-            • International trips (Southeast Asia): ₹10,000-50,000 per day
-          </li>
-          <li>• International trips (Europe/USA): ₹50,000-1,50,000 per day</li>
-          <li>• Luxury stays in India: ₹5,000-20,000 per night</li>
-          <li>• Budget hostels: ₹500-1,500 per night</li>
-        </ul>
-      </motion.div>
+      </div>
     </div>
   );
 };

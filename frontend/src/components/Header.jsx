@@ -1,30 +1,43 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Logo from "../assets/Logo/Logo.png";
-import labels from "../labels/common";
+import { useAuth } from "../context/AuthContext";
+import "../styles/components/Header.css";
 
-function Header() {
+const Header = () => {
+  const { user } = useAuth();
+
   return (
-    <div className="header-container container">
-      <header>
+    <header className="header">
+      <div className="header-container">
         <div className="header-logo">
           <Link to="/">
-            <img src={Logo} alt={labels.appName} />
-            <h1>TravelAI</h1>
+            <span className="logo-text">TravelAI</span>
           </Link>
         </div>
-
-        <div className="header-btn">
-          <Link to="/register" className="secondary-btn">
-            SignUp
-          </Link>
-          <Link to="/login" className="primary-btn">
-            SignIn
-          </Link>
-        </div>
-      </header>
-    </div>
+        <nav className="header-nav">
+          {user ? (
+            <>
+              <Link to="/dashboard" className="nav-link">
+                Dashboard
+              </Link>
+              <Link to="/profile" className="nav-link">
+                Profile
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="nav-link">
+                Login
+              </Link>
+              <Link to="/register" className="primary-btn small">
+                Sign Up
+              </Link>
+            </>
+          )}
+        </nav>
+      </div>
+    </header>
   );
-}
+};
 
 export default Header;

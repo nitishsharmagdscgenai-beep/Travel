@@ -1,4 +1,3 @@
-// src/pages/ChatAssistant.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -7,18 +6,12 @@ import {
   FiMic,
   FiMicOff,
   FiTrash2,
-  FiCpu,
-  FiMessageSquare,
   FiHelpCircle,
-  FiCompass,
-  FiDollarSign,
-  FiSun,
-  FiCoffee,
-  FiMap,
 } from "react-icons/fi";
-import { FaRobot } from "react-icons/fa"; // For robot icon
+import { FaRobot } from "react-icons/fa";
 import { aiAPI } from "../services/api";
 import toast from "react-hot-toast";
+import "../styles/pages/ChatAssistant.css";
 
 const ChatAssistant = () => {
   const [messages, setMessages] = useState([
@@ -145,31 +138,32 @@ const ChatAssistant = () => {
   ];
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="grid lg:grid-cols-4 gap-6 h-full">
+    <div className="chat-container">
+      <div className="chat-grid">
         {/* Chat Area */}
-        <div className="lg:col-span-3 flex flex-col glass-card overflow-hidden">
+        <div className="chat-main">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-                <FaRobot className="text-white text-xl" />
+          <div className="chat-header">
+            <div className="chat-header-info">
+              <div className="chat-avatar">
+                <FaRobot size={20} />
               </div>
               <div>
-                <h2 className="font-semibold">AI Travel Assistant</h2>
-                <p className="text-xs text-gray-500">Online • Ready to help</p>
+                <h2>AI Travel Assistant</h2>
+                <p>Online • Ready to help</p>
               </div>
             </div>
             <button
               onClick={clearChat}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="clear-chat-btn"
+              title="Clear chat"
             >
-              <FiTrash2 className="text-red-500" />
+              <FiTrash2 size={18} />
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="chat-messages">
             <AnimatePresence>
               {messages.map((message) => (
                 <motion.div
@@ -177,35 +171,23 @@ const ChatAssistant = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+                  className={`message-wrapper ${message.type === "user" ? "user" : "bot"}`}
                 >
                   <div
-                    className={`flex items-start gap-3 max-w-[80%] ${message.type === "user" ? "flex-row-reverse" : ""}`}
+                    className={`message-bubble ${message.type === "user" ? "user" : "bot"}`}
                   >
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        message.type === "user"
-                          ? "bg-gradient-to-r from-blue-600 to-purple-600"
-                          : "bg-gray-300 dark:bg-gray-600"
-                      }`}
-                    >
+                    <div className="message-avatar">
                       {message.type === "user" ? (
-                        <FiUser className="text-white" />
+                        <FiUser size={14} />
                       ) : (
-                        <FaRobot className="text-white" />
+                        <FaRobot size={14} />
                       )}
                     </div>
-                    <div
-                      className={`rounded-xl p-3 ${
-                        message.type === "user"
-                          ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                      }`}
-                    >
-                      <p className="whitespace-pre-wrap">{message.content}</p>
-                      <p className="text-xs mt-1 opacity-70">
+                    <div className="message-content">
+                      <p>{message.content}</p>
+                      <span className="message-time">
                         {new Date(message.timestamp).toLocaleTimeString()}
-                      </p>
+                      </span>
                     </div>
                   </div>
                 </motion.div>
@@ -216,27 +198,16 @@ const ChatAssistant = () => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex justify-start"
+                className="message-wrapper bot"
               >
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                    <FaRobot />
+                <div className="message-bubble bot">
+                  <div className="message-avatar">
+                    <FaRobot size={14} />
                   </div>
-                  <div className="bg-gray-100 dark:bg-gray-700 rounded-xl p-3">
-                    <div className="flex gap-1">
-                      <span
-                        className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                        style={{ animationDelay: "0ms" }}
-                      ></span>
-                      <span
-                        className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                        style={{ animationDelay: "150ms" }}
-                      ></span>
-                      <span
-                        className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                        style={{ animationDelay: "300ms" }}
-                      ></span>
-                    </div>
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                   </div>
                 </div>
               </motion.div>
@@ -246,17 +217,13 @@ const ChatAssistant = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex gap-3">
+          <div className="chat-input-area">
+            <div className="input-wrapper">
               <button
                 onClick={toggleVoiceInput}
-                className={`p-3 rounded-xl transition-all ${
-                  isListening
-                    ? "bg-red-500 text-white animate-pulse"
-                    : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                }`}
+                className={`voice-btn ${isListening ? "listening" : ""}`}
               >
-                {isListening ? <FiMicOff /> : <FiMic />}
+                {isListening ? <FiMicOff size={18} /> : <FiMic size={18} />}
               </button>
               <textarea
                 ref={inputRef}
@@ -264,71 +231,50 @@ const ChatAssistant = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask me anything about travel..."
-                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 transition-all resize-none"
+                className="chat-input"
                 rows="1"
               />
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || loading}
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg disabled:opacity-50 transition-all"
+                className="send-btn"
               >
-                <FiSend />
+                <FiSend size={18} />
               </button>
             </div>
           </div>
         </div>
 
         {/* Suggestions Sidebar */}
-        <div className="lg:col-span-1 space-y-4">
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="glass-card p-6"
-          >
-            <h3 className="font-semibold mb-3 flex items-center gap-2">
-              <FiHelpCircle /> Suggested Questions
+        <div className="chat-sidebar">
+          <div className="suggestions-card">
+            <h3>
+              <FiHelpCircle size={18} /> Suggested Questions
             </h3>
-            <div className="space-y-2">
+            <div className="suggestions-list">
               {suggestedQuestions.map((question, idx) => (
                 <button
                   key={idx}
                   onClick={() => setInput(question)}
-                  className="w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
+                  className="suggestion-btn"
                 >
                   {question}
                 </button>
               ))}
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="glass-card p-6"
-          >
-            <h3 className="font-semibold mb-3">Quick Tips</h3>
-            <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-              <li className="flex items-center gap-2">
-                • Ask about specific destinations
-              </li>
-              <li className="flex items-center gap-2">
-                • Request budget breakdowns
-              </li>
-              <li className="flex items-center gap-2">
-                • Get local food recommendations
-              </li>
-              <li className="flex items-center gap-2">
-                • Learn about hidden gems
-              </li>
-              <li className="flex items-center gap-2">
-                • Check weather patterns
-              </li>
-              <li className="flex items-center gap-2">
-                • Get packing suggestions
-              </li>
+          <div className="tips-card">
+            <h3>Quick Tips</h3>
+            <ul className="tips-list">
+              <li>• Ask about specific destinations</li>
+              <li>• Request budget breakdowns</li>
+              <li>• Get local food recommendations</li>
+              <li>• Learn about hidden gems</li>
+              <li>• Check weather patterns</li>
+              <li>• Get packing suggestions</li>
             </ul>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

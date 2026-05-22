@@ -1,16 +1,24 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { FiLoader } from "react-icons/fi";
+import "../styles/components/PrivateRoute.css";
 
 const PrivateRoute = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+      <div className="loading-container">
+        <div className="loading-card">
+          <div className="loading-spinner-wrapper">
+            <div className="loading-spinner"></div>
+            <FiLoader className="loading-icon" />
+          </div>
+          <h3 className="loading-title">Loading your dashboard</h3>
+          <p className="loading-subtitle">
+            Please wait while we set things up...
+          </p>
         </div>
       </div>
     );

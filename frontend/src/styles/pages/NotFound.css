@@ -1,0 +1,306 @@
+/* NotFound Page Styles - Light Mode Only */
+.notfound-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--white) 0%,
+    var(--primary-color-10) 100%
+  );
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative background elements */
+.notfound-container::before {
+  content: "";
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--primary-color-20), transparent);
+  border-radius: 50%;
+  top: -200px;
+  right: -200px;
+  animation: floatNotFound 10s ease-in-out infinite;
+}
+
+.notfound-container::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, var(--secondary-color-20), transparent);
+  border-radius: 50%;
+  bottom: -150px;
+  left: -150px;
+  animation: floatNotFound 8s ease-in-out infinite reverse;
+}
+
+@keyframes floatNotFound {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(30px, 30px);
+  }
+}
+
+.notfound-card {
+  background: var(--white);
+  border: 1px solid var(--primary-color-20);
+  border-radius: 48px;
+  padding: 60px 48px;
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+  box-shadow: 0 25px 50px var(--black-15);
+  position: relative;
+  z-index: 1;
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notfound-icon {
+  font-size: 96px;
+  margin-bottom: 32px;
+  display: inline-block;
+  filter: drop-shadow(0 4px 8px var(--black-10));
+}
+
+.notfound-title {
+  font-size: 120px;
+  font-weight: 800;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 16px;
+  line-height: 1;
+  font-family: "Modern Antiqua", serif;
+  letter-spacing: 8px;
+}
+
+.notfound-subtitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 16px;
+  font-family: "Modern Antiqua", serif;
+}
+
+.notfound-message {
+  color: var(--gray);
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.notfound-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.home-btn,
+.dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.home-btn {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  color: var(--white);
+  border: none;
+  box-shadow: 0 4px 15px var(--primary-color-30);
+}
+
+.home-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px var(--primary-color-40);
+}
+
+.dashboard-btn {
+  background: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.dashboard-btn:hover {
+  background: var(--primary-color-10);
+  transform: translateY(-3px);
+}
+
+.notfound-footer {
+  padding-top: 32px;
+  border-top: 1px solid var(--primary-color-20);
+}
+
+.notfound-footer p {
+  color: var(--gray);
+  font-size: 14px;
+}
+
+/* Optional: Add floating particles */
+.particle {
+  position: absolute;
+  background: var(--primary-color-20);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatParticle 6s ease-in-out infinite;
+}
+
+@keyframes floatParticle {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .notfound-card {
+    padding: 40px 32px;
+    max-width: 480px;
+  }
+
+  .notfound-icon {
+    font-size: 72px;
+    margin-bottom: 24px;
+  }
+
+  .notfound-title {
+    font-size: 80px;
+    letter-spacing: 4px;
+  }
+
+  .notfound-subtitle {
+    font-size: 24px;
+  }
+
+  .notfound-message {
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .home-btn,
+  .dashboard-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notfound-card {
+    padding: 32px 24px;
+    border-radius: 32px;
+  }
+
+  .notfound-icon {
+    font-size: 56px;
+    margin-bottom: 20px;
+  }
+
+  .notfound-title {
+    font-size: 60px;
+    margin-bottom: 12px;
+  }
+
+  .notfound-subtitle {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .notfound-message {
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+
+  .notfound-buttons {
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .home-btn,
+  .dashboard-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .notfound-footer p {
+    font-size: 12px;
+  }
+}
+
+/* Optional: Add a subtle glow effect on hover */
+.home-btn,
+.dashboard-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.home-btn::before,
+.dashboard-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.6s,
+    height 0.6s;
+}
+
+.home-btn:hover::before,
+.dashboard-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Optional: Add cursor pointer for buttons */
+.home-btn,
+.dashboard-btn {
+  cursor: pointer;
+}
