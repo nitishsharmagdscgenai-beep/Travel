@@ -1,8 +1,7 @@
-// src/pages/Home.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiMap, FiCpu, FiCloud, FiTrendingUp, FiLogOut } from "react-icons/fi";
+import { FiMap, FiCpu, FiCloud, FiTrendingUp } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import Header from "../components/Header";
 import labels from "../labels/common";
@@ -14,22 +13,18 @@ const Home = () => {
     {
       icon: FiCpu,
       title: "AI-Powered Planning",
-      desc: "Smart itineraries tailored to your preferences",
     },
     {
       icon: FiMap,
       title: "Interactive Maps",
-      desc: "Explore destinations with detailed maps",
     },
     {
       icon: FiCloud,
       title: "Real-time Weather",
-      desc: "Stay updated with weather forecasts",
     },
     {
       icon: FiTrendingUp,
       title: "Budget Tracking",
-      desc: "Manage and optimize your travel budget",
     },
   ];
 
@@ -46,7 +41,7 @@ const Home = () => {
             </div>
             <div className="hero-btn">
               <Link to="/dashboard" className="secondary-btn">
-                DashBoard
+                Dashboard
               </Link>
               <Link to="/register" className="primary-btn">
                 Get Started
@@ -55,13 +50,18 @@ const Home = () => {
           </div>
 
           <div className="home-usp">
-            {usps &&
-              usps.map((usp, index) => (
-                <div className="usp">
-                  {<usp.icon className="icon" />}
-                  <h3>{usp.title}</h3>
-                </div>
-              ))}
+            {usps.map((usp, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="usp"
+              >
+                <usp.icon className="icon" />
+                <h3>{usp.title}</h3>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>

@@ -1,72 +1,70 @@
-/* NotFound Page Styles - Light Mode Only */
+/* NotFound Page Styles - Premium Light Mode (Matching Login/Register) */
 .notfound-container {
+  width: 100%;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(
-    135deg,
+    180deg,
     var(--white) 0%,
-    var(--primary-color-10) 100%
+    var(--primary-color) 100%
   );
   padding: 20px;
   position: relative;
   overflow: hidden;
 }
 
-/* Decorative background elements */
+/* Decorative background elements - subtle */
 .notfound-container::before {
-  content: "";
+  content: "✈️";
   position: absolute;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, var(--primary-color-20), transparent);
-  border-radius: 50%;
-  top: -200px;
-  right: -200px;
-  animation: floatNotFound 10s ease-in-out infinite;
+  font-size: 200px;
+  opacity: 0.05;
+  bottom: -50px;
+  right: -50px;
+  animation: floatNotFound 8s ease-in-out infinite;
 }
 
 .notfound-container::after {
-  content: "";
+  content: "🗺️";
   position: absolute;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, var(--secondary-color-20), transparent);
-  border-radius: 50%;
-  bottom: -150px;
-  left: -150px;
-  animation: floatNotFound 8s ease-in-out infinite reverse;
+  font-size: 150px;
+  opacity: 0.05;
+  top: -30px;
+  left: -30px;
+  animation: floatNotFound 6s ease-in-out infinite reverse;
 }
 
 @keyframes floatNotFound {
   0%,
   100% {
-    transform: translate(0, 0);
+    transform: translate(0, 0) rotate(0deg);
   }
   50% {
-    transform: translate(30px, 30px);
+    transform: translate(-20px, 20px) rotate(5deg);
   }
 }
 
 .notfound-card {
-  background: var(--white);
-  border: 1px solid var(--primary-color-20);
-  border-radius: 48px;
-  padding: 60px 48px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 32px;
+  padding: 48px 40px;
   width: 100%;
-  max-width: 560px;
+  max-width: 520px;
   text-align: center;
-  box-shadow: 0 25px 50px var(--black-15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
   position: relative;
   z-index: 1;
-  animation: slideUp 0.6s ease-out;
+  animation: slideUp 0.5s ease-out;
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -75,31 +73,33 @@
 }
 
 .notfound-icon {
-  font-size: 96px;
-  margin-bottom: 32px;
+  font-size: 80px;
+  margin-bottom: 24px;
   display: inline-block;
-  filter: drop-shadow(0 4px 8px var(--black-10));
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .notfound-title {
-  font-size: 120px;
+  font-size: 4rem;
   font-weight: 800;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--secondary-color)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin-bottom: 16px;
+  color: var(--primary-color);
+  margin-bottom: 12px;
   line-height: 1;
   font-family: "Modern Antiqua", serif;
-  letter-spacing: 8px;
 }
 
 .notfound-subtitle {
-  font-size: 28px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--primary-color);
   margin-bottom: 16px;
@@ -108,10 +108,10 @@
 
 .notfound-message {
   color: var(--gray);
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.6;
-  margin-bottom: 40px;
-  max-width: 400px;
+  margin-bottom: 32px;
+  max-width: 380px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -119,8 +119,8 @@
 .notfound-buttons {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 48px;
+  gap: 12px;
+  margin-bottom: 32px;
 }
 
 .home-btn,
@@ -128,30 +128,26 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   padding: 14px 24px;
   border-radius: 50px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 400;
   text-decoration: none;
   transition: all 0.3s ease;
   width: 100%;
 }
 
 .home-btn {
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--secondary-color)
-  );
+  background: var(--primary-color);
   color: var(--white);
   border: none;
-  box-shadow: 0 4px 15px var(--primary-color-30);
 }
 
 .home-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px var(--primary-color-40);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(13, 83, 14, 0.3);
+  background: var(--primary-color-80);
 }
 
 .dashboard-btn {
@@ -161,64 +157,43 @@
 }
 
 .dashboard-btn:hover {
-  background: var(--primary-color-10);
-  transform: translateY(-3px);
+  background: rgba(13, 83, 14, 0.05);
+  transform: translateY(-2px);
 }
 
 .notfound-footer {
-  padding-top: 32px;
-  border-top: 1px solid var(--primary-color-20);
+  padding-top: 20px;
+  border-top: 1px solid rgba(13, 83, 14, 0.2);
 }
 
 .notfound-footer p {
   color: var(--gray);
-  font-size: 14px;
-}
-
-/* Optional: Add floating particles */
-.particle {
-  position: absolute;
-  background: var(--primary-color-20);
-  border-radius: 50%;
-  pointer-events: none;
-  animation: floatParticle 6s ease-in-out infinite;
-}
-
-@keyframes floatParticle {
-  0%,
-  100% {
-    transform: translateY(0) translateX(0);
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.5;
-  }
+  font-size: 12px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .notfound-card {
-    padding: 40px 32px;
-    max-width: 480px;
+    padding: 32px 24px;
+    max-width: 440px;
   }
 
   .notfound-icon {
-    font-size: 72px;
-    margin-bottom: 24px;
+    font-size: 60px;
+    margin-bottom: 20px;
   }
 
   .notfound-title {
-    font-size: 80px;
-    letter-spacing: 4px;
+    font-size: 3rem;
   }
 
   .notfound-subtitle {
-    font-size: 24px;
+    font-size: 1.25rem;
   }
 
   .notfound-message {
-    font-size: 14px;
-    margin-bottom: 32px;
+    font-size: 13px;
+    margin-bottom: 28px;
   }
 
   .home-btn,
@@ -230,33 +205,31 @@
 
 @media (max-width: 480px) {
   .notfound-card {
-    padding: 32px 24px;
-    border-radius: 32px;
+    padding: 24px 20px;
   }
 
   .notfound-icon {
-    font-size: 56px;
-    margin-bottom: 20px;
+    font-size: 48px;
+    margin-bottom: 16px;
   }
 
   .notfound-title {
-    font-size: 60px;
-    margin-bottom: 12px;
+    font-size: 2.5rem;
   }
 
   .notfound-subtitle {
-    font-size: 20px;
+    font-size: 1.1rem;
     margin-bottom: 12px;
   }
 
   .notfound-message {
-    font-size: 13px;
-    margin-bottom: 28px;
+    font-size: 12px;
+    margin-bottom: 24px;
   }
 
   .notfound-buttons {
-    gap: 12px;
-    margin-bottom: 32px;
+    gap: 10px;
+    margin-bottom: 24px;
   }
 
   .home-btn,
@@ -266,41 +239,6 @@
   }
 
   .notfound-footer p {
-    font-size: 12px;
+    font-size: 10px;
   }
-}
-
-/* Optional: Add a subtle glow effect on hover */
-.home-btn,
-.dashboard-btn {
-  position: relative;
-  overflow: hidden;
-}
-
-.home-btn::before,
-.dashboard-btn::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  transform: translate(-50%, -50%);
-  transition:
-    width 0.6s,
-    height 0.6s;
-}
-
-.home-btn:hover::before,
-.dashboard-btn:hover::before {
-  width: 300px;
-  height: 300px;
-}
-
-/* Optional: Add cursor pointer for buttons */
-.home-btn,
-.dashboard-btn {
-  cursor: pointer;
 }

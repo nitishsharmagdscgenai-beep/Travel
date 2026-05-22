@@ -42,7 +42,6 @@ const Login = () => {
               <FiMail size={16} /> Email
             </label>
             <div className="input-wrapper">
-              <FiMail className="input-icon" />
               <input
                 type="email"
                 value={email}
@@ -52,12 +51,12 @@ const Login = () => {
               />
             </div>
           </div>
+
           <div className="form-group">
             <label>
               <FiLock size={16} /> Password
             </label>
             <div className="input-wrapper">
-              <FiLock className="input-icon" />
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}

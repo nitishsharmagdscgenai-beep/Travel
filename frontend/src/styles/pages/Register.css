@@ -1,62 +1,60 @@
-/* Register Page Styles - Light Mode Only */
+/* Register Page Styles - Premium Light Mode */
 .register-container {
+  width: 100%;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(
-    135deg,
+    180deg,
     var(--white) 0%,
-    var(--primary-color-10) 100%
+    var(--primary-color) 100%
   );
   padding: 20px;
   position: relative;
   overflow: hidden;
 }
 
-/* Decorative background elements */
+/* Decorative background elements - subtle */
 .register-container::before {
-  content: "";
+  content: "✈️";
   position: absolute;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, var(--primary-color-20), transparent);
-  border-radius: 50%;
-  top: -150px;
-  left: -150px;
+  font-size: 200px;
+  opacity: 0.05;
+  bottom: -50px;
+  right: -50px;
   animation: floatRegister 8s ease-in-out infinite;
 }
 
 .register-container::after {
-  content: "";
+  content: "🗺️";
   position: absolute;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, var(--secondary-color-20), transparent);
-  border-radius: 50%;
-  bottom: -100px;
-  right: -100px;
+  font-size: 150px;
+  opacity: 0.05;
+  top: -30px;
+  left: -30px;
   animation: floatRegister 6s ease-in-out infinite reverse;
 }
 
 @keyframes floatRegister {
   0%,
   100% {
-    transform: translate(0, 0);
+    transform: translate(0, 0) rotate(0deg);
   }
   50% {
-    transform: translate(-20px, 20px);
+    transform: translate(-20px, 20px) rotate(5deg);
   }
 }
 
 .register-card {
-  background: var(--white);
-  border: 1px solid var(--primary-color-20);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 32px;
   padding: 48px 40px;
   width: 100%;
   max-width: 520px;
-  box-shadow: 0 20px 40px var(--black-10);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
   position: relative;
   z-index: 1;
   animation: slideUp 0.5s ease-out;
@@ -75,20 +73,15 @@
 
 .register-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .register-header .gradient-text {
   font-size: 2rem;
-  margin-bottom: 12px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--secondary-color)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--primary-color);
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
   font-family: "Modern Antiqua", serif;
 }
 
@@ -100,15 +93,16 @@
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+
+  .form-group {
+    margin-bottom: 20px;
+  }
 }
 
 .form-group label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--primary-color);
   font-size: 14px;
 }
@@ -118,20 +112,9 @@
   width: 100%;
 }
 
-.input-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gray);
-  pointer-events: none;
-  font-size: 18px;
-}
-
 .input-wrapper input {
   width: 100%;
-  padding: 14px 16px 14px 48px;
-  border: 2px solid var(--primary-color-20);
+  border: 2px solid rgba(13, 83, 14, 0.2);
   border-radius: 16px;
   font-size: 15px;
   transition: all 0.3s ease;
@@ -143,11 +126,11 @@
 .input-wrapper input:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px var(--primary-color-20);
+  box-shadow: 0 0 0 3px rgba(13, 83, 14, 0.1);
 }
 
 .input-wrapper input::placeholder {
-  color: var(--gray-50);
+  color: rgba(68, 68, 68, 0.5);
 }
 
 .password-toggle {
@@ -194,25 +177,21 @@
 .register-btn {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--secondary-color)
-  );
+  background: var(--primary-color);
   color: var(--white);
   border: none;
-  border-radius: 20px;
+  border-radius: 50px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 8px;
   font-family: inherit;
 }
 
 .register-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--primary-color-30);
+  box-shadow: 0 8px 25px rgba(13, 83, 14, 0.3);
+  background: var(--primary-color-80);
 }
 
 .register-btn:disabled {
@@ -222,9 +201,9 @@
 
 .login-link {
   text-align: center;
-  margin-top: 32px;
   color: var(--gray);
   font-size: 14px;
+  padding: 10px 0px;
 }
 
 .login-link a {
@@ -236,38 +215,19 @@
 
 .login-link a:hover {
   text-decoration: underline;
-  color: var(--secondary-color);
+  color: var(--black);
 }
 
 .terms-text {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--primary-color-20);
+  border-top: 1px solid rgba(13, 83, 14, 0.2);
   text-align: center;
+  padding-top: 15px;
 }
 
 .terms-text p {
   font-size: 11px;
   color: var(--gray);
   line-height: 1.4;
-}
-
-/* Password strength indicator (optional enhancement) */
-.password-strength {
-  margin-top: 8px;
-  font-size: 11px;
-}
-
-.strength-weak {
-  color: #dc2626;
-}
-
-.strength-medium {
-  color: #f59e0b;
-}
-
-.strength-strong {
-  color: #10b981;
 }
 
 /* Responsive Design */
@@ -341,13 +301,4 @@
   .terms-text p {
     font-size: 10px;
   }
-}
-
-/* Optional: Add focus ring for better accessibility */
-.input-wrapper input:focus-visible,
-.register-btn:focus-visible,
-.password-toggle:focus-visible {
-  outline: none;
-  ring: 2px solid var(--primary-color);
-  ring-offset: 2px;
 }

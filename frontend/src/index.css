@@ -2,13 +2,13 @@
 @import "./styles/global.css";
 @import "./styles/reset.css";
 @import "./styles/components/Header.css";
-@import "./styles/components/Home.css";
 @import "./styles/components/Layout.css";
 @import "./styles/components/Sidebar.css";
 @import "./styles/components/Navbar.css";
 @import "./styles/components/PrivateRoute.css";
 @import "./styles/components/SkeletonLoader.css";
 @import "./styles/components/TripCard.css";
+@import "./styles/pages/Home.css";
 @import "./styles/pages/Dashboard.css";
 @import "./styles/pages/CreateTrip.css";
 @import "./styles/pages/ChatAssistant.css";

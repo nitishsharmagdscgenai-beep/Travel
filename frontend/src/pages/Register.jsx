@@ -12,6 +12,7 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -72,7 +73,6 @@ const Register = () => {
               <FiUser size={16} /> Full Name
             </label>
             <div className="input-wrapper">
-              <FiUser className="input-icon" />
               <input
                 type="text"
                 name="name"
@@ -89,7 +89,6 @@ const Register = () => {
               <FiMail size={16} /> Email
             </label>
             <div className="input-wrapper">
-              <FiMail className="input-icon" />
               <input
                 type="email"
                 name="email"
@@ -106,7 +105,6 @@ const Register = () => {
               <FiLock size={16} /> Password
             </label>
             <div className="input-wrapper">
-              <FiLock className="input-icon" />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -130,7 +128,6 @@ const Register = () => {
               <FiLock size={16} /> Confirm Password
             </label>
             <div className="input-wrapper">
-              <FiLock className="input-icon" />
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
