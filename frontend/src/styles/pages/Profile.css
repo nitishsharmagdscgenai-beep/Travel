@@ -246,7 +246,7 @@
   display: inline-block;
 }
 
-.stat-value {
+/* .stat-value {
   font-size: 32px;
   font-weight: 700;
   color: var(--primary-color);
@@ -258,7 +258,7 @@
   color: var(--gray);
   font-size: 14px;
   font-weight: 500;
-}
+} */
 
 /* Activity Card */
 .activity-card,

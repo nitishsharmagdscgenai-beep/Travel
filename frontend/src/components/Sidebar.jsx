@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiHome,
@@ -15,6 +15,7 @@ import {
   FiLogOut,
 } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
+import Logo from "../assets/Logo/Logo.png";
 import "../styles/components/Sidebar.css";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -85,7 +86,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 className="mobile-sidebar"
               >
                 <div className="mobile-sidebar-header">
-                  <div className="sidebar-logo">TravelAI</div>
+                  <div className="sidebar-logo">
+                    <Link to="/">TravelAI</Link>
+                  </div>
                   <button onClick={closeMobileMenu} className="close-btn">
                     <FiX size={24} />
                   </button>
@@ -112,7 +115,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <div className="mobile-sidebar-footer">
                   <button onClick={toggleDarkMode} className="theme-toggle">
                     <FiMoon size={20} />
-                    <span>Dark Mode (Coming Soon)</span>
+                    <span>Dark Mode</span>
                   </button>
                 </div>
               </motion.aside>
@@ -131,17 +134,32 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     >
       <div className="sidebar-content">
         <div className="sidebar-header">
-          <motion.div
-            animate={{ opacity: isOpen ? 1 : 0 }}
-            className="sidebar-logo"
-          >
-            TravelAI
-          </motion.div>
+          {isOpen ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="sidebar-logo"
+            >
+              <Link to="/">TravelAI</Link>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="sidebar-logo-icon"
+            >
+              <Link to="/">
+                <img src={Logo} alt="TravelAI" />
+              </Link>
+            </motion.div>
+          )}
           <button onClick={toggleSidebar} className="sidebar-toggle">
             {isOpen ? (
-              <FiChevronLeft size={16} />
+              <FiChevronLeft className="icon" />
             ) : (
-              <FiChevronRight size={16} />
+              <FiChevronRight className="icon" />
             )}
           </button>
         </div>
@@ -188,7 +206,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 display: isOpen ? "inline" : "none",
               }}
             >
-              Dark Mode (Coming Soon)
+              Dark Mode
             </motion.span>
           </button>
         </div>

@@ -16,8 +16,11 @@
 }
 
 @media (max-width: 768px) {
+  .layout-main {
+    margin-left: 0 !important;
+  }
+
   .layout-main main {
     padding: 15px;
-    margin-left: 0;
   }
 }

@@ -1,9 +1,5 @@
-/* Create Trip Page Styles - Light Mode Only */
 .create-trip-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  min-height: calc(100vh - 80px);
+  padding: 20px;
 }
 
 .create-trip-card {
@@ -39,6 +35,12 @@
   color: var(--gray);
   margin-bottom: 32px;
   font-size: 14px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .form-group label {
@@ -182,16 +184,12 @@
 .submit-btn {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--secondary-color)
-  );
+  background-color: var(--primary-color);
   color: var(--white);
   border: none;
   border-radius: 20px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 20px;
@@ -203,7 +201,6 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
   box-shadow: 0 6px 20px var(--primary-color-30);
 }
 
@@ -229,7 +226,6 @@
 .budget-range {
   margin-top: 8px;
   padding: 12px;
-  background: var(--primary-color-10);
   border-radius: 12px;
 }
 

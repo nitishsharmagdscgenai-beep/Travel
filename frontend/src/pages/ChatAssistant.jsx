@@ -11,7 +11,6 @@ import {
 import { FaRobot } from "react-icons/fa";
 import { aiAPI } from "../services/api";
 import toast from "react-hot-toast";
-import "../styles/pages/ChatAssistant.css";
 
 const ChatAssistant = () => {
   const [messages, setMessages] = useState([
