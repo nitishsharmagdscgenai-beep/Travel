@@ -1,4 +1,3 @@
-// models/User.js
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
@@ -22,6 +21,46 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: "",
+  },
+  bio: {
+    type: String,
+    default: "",
+  },
+  phone: {
+    type: String,
+    default: "",
+  },
+  location: {
+    type: String,
+    default: "",
+  },
+  preferences: {
+    travelStyle: {
+      type: String,
+      enum: ["budget", "moderate", "luxury"],
+      default: "moderate",
+    },
+    favoriteDestinations: {
+      type: String,
+      default: "",
+    },
+    emailNotifications: {
+      type: Boolean,
+      default: true,
+    },
+    currency: {
+      type: String,
+      default: "INR",
+    },
+    language: {
+      type: String,
+      default: "en",
+    },
+    budgetRange: {
+      type: String,
+      enum: ["budget", "moderate", "luxury"],
+      default: "moderate",
+    },
   },
   createdAt: {
     type: Date,

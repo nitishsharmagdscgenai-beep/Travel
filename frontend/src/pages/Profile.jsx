@@ -15,14 +15,18 @@ import {
   FiTrendingUp,
   FiAward,
   FiStar,
+  FiCompass, // Add this
+  FiBell, // Add this
+  FiCreditCard, // Add this
 } from "react-icons/fi";
 import { tripAPI } from "../services/api";
 import toast from "react-hot-toast";
 import "../styles/pages/Profile.css";
 
 const Profile = () => {
-  const { user, setUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingPreferences, setIsEditingPreferences] = useState(false);
   const [loading, setLoading] = useState(false);
   const [trips, setTrips] = useState([]);
   const [stats, setStats] = useState({
@@ -42,14 +46,32 @@ const Profile = () => {
     location: user?.location || "",
   });
 
+  const [preferences, setPreferences] = useState({
+    travelStyle: user?.preferences?.travelStyle || "moderate",
+    favoriteDestinations: user?.preferences?.favoriteDestinations || "",
+    emailNotifications: user?.preferences?.emailNotifications !== false,
+    currency: user?.preferences?.currency || "INR",
+    language: user?.preferences?.language || "en",
+    budgetRange: user?.preferences?.budgetRange || "moderate",
+  });
+
   useEffect(() => {
     fetchUserTrips();
+    loadUserPreferences();
   }, []);
 
   const formatINR = (amount) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const formatCurrency = (amount, currency = "INR") => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: currency,
       maximumFractionDigits: 0,
     }).format(amount);
   };
@@ -97,29 +119,83 @@ const Profile = () => {
     });
   };
 
+  const loadUserPreferences = async () => {
+    try {
+      const response = await fetch(`/api/auth/preferences`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setPreferences(data);
+      }
+    } catch (error) {
+      console.error("Error loading preferences:", error);
+    }
+  };
+
   const handleUpdate = async () => {
     setLoading(true);
     try {
-      // Update user profile API call
       const response = await fetch(`/api/auth/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          bio: formData.bio,
+          phone: formData.phone,
+          location: formData.location,
+        }),
       });
 
       if (response.ok) {
         const updatedUser = await response.json();
-        setUser(updatedUser);
+        updateUser(updatedUser);
+        // Also update localStorage if you store user there
+        localStorage.setItem("user", JSON.stringify(updatedUser));
         toast.success("Profile updated successfully");
         setIsEditing(false);
       } else {
-        throw new Error("Update failed");
+        const error = await response.json();
+        throw new Error(error.message || "Update failed");
       }
     } catch (error) {
-      toast.error("Failed to update profile");
+      console.error("Update error:", error);
+      toast.error(error.message || "Failed to update profile");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSavePreferences = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/auth/preferences`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(preferences),
+      });
+
+      if (response.ok) {
+        const updatedPrefs = await response.json();
+        setPreferences(updatedPrefs);
+        toast.success("Preferences saved successfully");
+        setIsEditingPreferences(false);
+      } else {
+        const error = await response.json();
+        throw new Error(error.message || "Save failed");
+      }
+    } catch (error) {
+      console.error("Save preferences error:", error);
+      toast.error(error.message || "Failed to save preferences");
     } finally {
       setLoading(false);
     }
@@ -173,6 +249,14 @@ const Profile = () => {
     },
   ];
 
+  function getAdventureScore() {
+    const score = Math.min(
+      100,
+      Math.floor(stats.totalTrips * 10 + stats.uniqueDestinations * 5),
+    );
+    return `${score}%`;
+  }
+
   const recentTrips = trips.slice(0, 3);
 
   return (
@@ -225,15 +309,15 @@ const Profile = () => {
                     />
                   </div>
                   <div className="edit-field">
-                    <label>Bio</label>
-                    <textarea
-                      value={formData.bio}
+                    <label>Phone</label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
                       onChange={(e) =>
-                        setFormData({ ...formData, bio: e.target.value })
+                        setFormData({ ...formData, phone: e.target.value })
                       }
-                      className="edit-field-input edit-textarea"
-                      rows="3"
-                      placeholder="Tell us about your travel style..."
+                      className="edit-field-input"
+                      placeholder="+91 XXXXX XXXXX"
                     />
                   </div>
                   <div className="edit-field">
@@ -246,6 +330,18 @@ const Profile = () => {
                       }
                       className="edit-field-input"
                       placeholder="City, Country"
+                    />
+                  </div>
+                  <div className="edit-field">
+                    <label>Bio</label>
+                    <textarea
+                      value={formData.bio}
+                      onChange={(e) =>
+                        setFormData({ ...formData, bio: e.target.value })
+                      }
+                      className="edit-field-input edit-textarea"
+                      rows="3"
+                      placeholder="Tell us about your travel style..."
                     />
                   </div>
                 </div>
@@ -287,6 +383,14 @@ const Profile = () => {
                       ).toLocaleDateString()}
                     </span>
                   </div>
+
+                  {user?.phone && (
+                    <div className="profile-info-item">
+                      <FiUser size={14} />
+                      <span>{user.phone}</span>
+                    </div>
+                  )}
+
                   {user?.location && (
                     <div className="profile-info-item">
                       <FiMapPin size={14} />
@@ -400,44 +504,186 @@ const Profile = () => {
         transition={{ delay: 0.4 }}
         className="preferences-section"
       >
-        <h2 className="section-title">Travel Preferences</h2>
-        <div className="preferences-grid">
-          <div className="preference-item">
-            <label>Preferred Travel Style</label>
-            <select className="preference-select">
-              <option>Moderate</option>
-              <option>Luxury</option>
-              <option>Budget</option>
-            </select>
-          </div>
-          <div className="preference-item">
-            <label>Favorite Destinations</label>
-            <input
-              type="text"
-              placeholder="e.g., Paris, Tokyo, Bali"
-              className="preference-input"
-            />
-          </div>
-          <div className="preference-item">
-            <label>Email Notifications</label>
-            <div className="checkbox-wrapper">
-              <input type="checkbox" id="notifications" />
-              <label htmlFor="notifications">
-                Receive travel deals and tips
-              </label>
+        <div className="preferences-header">
+          <h2 className="section-title">Travel Preferences</h2>
+          {!isEditingPreferences && (
+            <button
+              onClick={() => setIsEditingPreferences(true)}
+              className="edit-preferences-btn"
+            >
+              <FiEdit2 size={14} /> Edit
+            </button>
+          )}
+        </div>
+
+        {isEditingPreferences ? (
+          <div className="preferences-edit-form">
+            <div className="preferences-grid">
+              <div className="preference-item">
+                <label>Travel Style</label>
+                <select
+                  value={preferences.travelStyle}
+                  onChange={(e) =>
+                    setPreferences({
+                      ...preferences,
+                      travelStyle: e.target.value,
+                    })
+                  }
+                  className="preference-select"
+                >
+                  <option value="budget">Budget Traveler</option>
+                  <option value="moderate">Moderate Traveler</option>
+                  <option value="luxury">Luxury Traveler</option>
+                </select>
+              </div>
+
+              <div className="preference-item">
+                <label>Favorite Destinations</label>
+                <input
+                  type="text"
+                  value={preferences.favoriteDestinations}
+                  onChange={(e) =>
+                    setPreferences({
+                      ...preferences,
+                      favoriteDestinations: e.target.value,
+                    })
+                  }
+                  placeholder="e.g., Paris, Tokyo, Bali"
+                  className="preference-input"
+                />
+              </div>
+
+              <div className="preference-item">
+                <label>Email Notifications</label>
+                <div className="checkbox-wrapper">
+                  <input
+                    type="checkbox"
+                    id="notifications"
+                    checked={preferences.emailNotifications}
+                    onChange={(e) =>
+                      setPreferences({
+                        ...preferences,
+                        emailNotifications: e.target.checked,
+                      })
+                    }
+                  />
+                  <label htmlFor="notifications">
+                    Receive travel deals and tips
+                  </label>
+                </div>
+              </div>
+
+              <div className="preference-item">
+                <label>Currency</label>
+                <select
+                  value={preferences.currency}
+                  onChange={(e) =>
+                    setPreferences({ ...preferences, currency: e.target.value })
+                  }
+                  className="preference-select"
+                >
+                  <option value="INR">Indian Rupee (₹)</option>
+                  <option value="USD">US Dollar ($)</option>
+                  <option value="EUR">Euro (€)</option>
+                  <option value="GBP">British Pound (£)</option>
+                  <option value="JPY">Japanese Yen (¥)</option>
+                </select>
+              </div>
+
+              <div className="preference-item">
+                <label>Language</label>
+                <select
+                  value={preferences.language}
+                  onChange={(e) =>
+                    setPreferences({ ...preferences, language: e.target.value })
+                  }
+                  className="preference-select"
+                >
+                  <option value="en">English</option>
+                  <option value="hi">Hindi</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                </select>
+              </div>
+
+              <div className="preference-item">
+                <label>Budget Range</label>
+                <select
+                  value={preferences.budgetRange}
+                  onChange={(e) =>
+                    setPreferences({
+                      ...preferences,
+                      budgetRange: e.target.value,
+                    })
+                  }
+                  className="preference-select"
+                >
+                  <option value="budget">Budget (₹10k-30k per trip)</option>
+                  <option value="moderate">Moderate (₹30k-1L per trip)</option>
+                  <option value="luxury">Luxury (₹1L+ per trip)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="preferences-actions">
+              <button
+                onClick={handleSavePreferences}
+                disabled={loading}
+                className="save-preferences-btn"
+              >
+                <FiSave size={16} />{" "}
+                {loading ? "Saving..." : "Save Preferences"}
+              </button>
+              <button
+                onClick={() => setIsEditingPreferences(false)}
+                className="cancel-preferences-btn"
+              >
+                <FiX size={16} /> Cancel
+              </button>
             </div>
           </div>
-          <div className="preference-item">
-            <label>Currency</label>
-            <select className="preference-select">
-              <option>INR (₹)</option>
-              <option>USD ($)</option>
-              <option>EUR (€)</option>
-              <option>GBP (£)</option>
-            </select>
+        ) : (
+          <div className="preferences-display">
+            <div className="preferences-grid-display">
+              <div className="pref-display-item">
+                <span className="pref-label">Travel Style</span>
+                <span className="pref-value capitalize">
+                  {preferences.travelStyle}
+                </span>
+              </div>
+              <div className="pref-display-item">
+                <span className="pref-label">Favorite Destinations</span>
+                <span className="pref-value">
+                  {preferences.favoriteDestinations || "Not specified"}
+                </span>
+              </div>
+              <div className="pref-display-item">
+                <span className="pref-label">Email Notifications</span>
+                <span className="pref-value">
+                  {preferences.emailNotifications ? "Enabled" : "Disabled"}
+                </span>
+              </div>
+              <div className="pref-display-item">
+                <span className="pref-label">Currency</span>
+                <span className="pref-value">{preferences.currency}</span>
+              </div>
+              <div className="pref-display-item">
+                <span className="pref-label">Language</span>
+                <span className="pref-value">
+                  {preferences.language === "en"
+                    ? "English"
+                    : preferences.language}
+                </span>
+              </div>
+              <div className="pref-display-item">
+                <span className="pref-label">Budget Range</span>
+                <span className="pref-value capitalize">
+                  {preferences.budgetRange}
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
-        <button className="save-preferences-btn">Save Preferences</button>
+        )}
       </motion.div>
     </div>
   );

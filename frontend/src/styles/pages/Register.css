@@ -93,10 +93,6 @@
 .register-form {
   display: flex;
   flex-direction: column;
-
-  .form-group {
-    margin-bottom: 20px;
-  }
 }
 
 .form-group label {

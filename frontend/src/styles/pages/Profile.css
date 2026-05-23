@@ -1,3 +1,12 @@
+.preferences-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
 .profile-container {
   width: 100%;
   padding: 20px;
@@ -397,10 +406,43 @@
 }
 
 /* Preferences Section */
+/* Preferences Section Styles */
+.preferences-section {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 24px;
+  margin-top: 24px;
+  position: relative;
+}
+
+.edit-preferences-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--primary-color-10);
+  border: 1px solid var(--primary-color-20);
+  border-radius: 20px;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-preferences-btn:hover {
+  background: var(--primary-color-20);
+}
+
+.preferences-edit-form {
+  margin-top: 20px;
+}
+
 .preferences-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
   margin-bottom: 24px;
 }
 
@@ -411,26 +453,22 @@
 }
 
 .preference-item label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--primary-color);
 }
 
 .preference-select,
 .preference-input {
   width: 100%;
-  padding: 12px 16px;
-  border: 2px solid var(--primary-color-20);
-  border-radius: 14px;
+  padding: 10px 14px;
+  border: 1px solid var(--primary-color-20);
+  border-radius: 12px;
   font-size: 14px;
-  transition: all 0.3s ease;
   background: var(--white);
-}
-
-.preference-select:focus,
-.preference-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
 }
 
 .checkbox-wrapper {
@@ -443,35 +481,89 @@
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--primary-color);
 }
 
-.checkbox-wrapper label {
-  margin-bottom: 0;
+.preferences-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.save-preferences-btn,
+.cancel-preferences-btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 500;
   cursor: pointer;
-  font-weight: normal;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .save-preferences-btn {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--secondary-color)
-  );
+  background: var(--primary-color);
   color: var(--white);
   border: none;
-  border-radius: 16px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
 }
 
-.save-preferences-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--primary-color-30);
+.save-preferences-btn:hover:not(:disabled) {
+  background: var(--primary-color-80);
+}
+
+.cancel-preferences-btn {
+  background: var(--gray-10);
+  color: var(--gray);
+  border: 1px solid var(--gray-30);
+}
+
+.preferences-display {
+  margin-top: 20px;
+}
+
+.preferences-grid-display {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.pref-display-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--primary-color-10);
+  border-radius: 12px;
+}
+
+.pref-label {
+  font-size: 13px;
+  color: var(--gray);
+}
+
+.pref-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+@media (max-width: 768px) {
+  .preferences-grid,
+  .preferences-grid-display {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-preferences-btn {
+    position: static;
+    margin-bottom: 16px;
+  }
+
+  .preferences-section {
+    padding: 20px;
+  }
 }
 
 /* Responsive */
