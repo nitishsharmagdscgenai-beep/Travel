@@ -16,8 +16,6 @@ import {
   FiHome,
   FiMap,
   FiCamera,
-  FiShare2,
-  FiHeart,
 } from "react-icons/fi";
 import { tripAPI, weatherAPI } from "../services/api";
 import toast from "react-hot-toast";
@@ -92,7 +90,6 @@ const TripDetails = () => {
   const [weather, setWeather] = useState(null);
   const [showMap, setShowMap] = useState(false);
   const [mapCoordinates, setMapCoordinates] = useState([20.5937, 78.9629]);
-  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     fetchTripDetails();
@@ -168,6 +165,45 @@ const TripDetails = () => {
   const itinerary = trip.itinerary;
   const dailyItinerary = itinerary?.dailyItinerary || [];
 
+  // Function to normalize budget - MOVED HERE after itinerary is defined
+  const getNormalizedBudget = () => {
+    const estimatedBudget = itinerary?.estimatedBudget;
+    const actualBudget = trip.estimatedCost || trip.budget;
+
+    if (!estimatedBudget || !actualBudget) return null;
+
+    const estimatedTotal =
+      estimatedBudget.total ||
+      estimatedBudget.accommodation +
+        estimatedBudget.food +
+        estimatedBudget.activities +
+        estimatedBudget.transport;
+
+    if (estimatedTotal === 0) return null;
+
+    const ratio = actualBudget / estimatedTotal;
+
+    let accommodation = Math.round(estimatedBudget.accommodation * ratio);
+    let food = Math.round(estimatedBudget.food * ratio);
+    let activities = Math.round(estimatedBudget.activities * ratio);
+    let transport = Math.round(estimatedBudget.transport * ratio);
+
+    // Adjust to make total exact
+    const sum = accommodation + food + activities + transport;
+    const diff = actualBudget - sum;
+    accommodation += diff;
+
+    return {
+      accommodation,
+      food,
+      activities,
+      transport,
+      total: actualBudget,
+    };
+  };
+
+  const normalizedBudget = getNormalizedBudget();
+
   return (
     <div className="trip-details-container">
       {/* Header Section */}
@@ -198,10 +234,16 @@ const TripDetails = () => {
           </div>
 
           <div className="trip-actions">
-            <button onClick={handleExport} className="action-btn trip-export-btn">
+            <button
+              onClick={handleExport}
+              className="action-btn trip-export-btn"
+            >
               <FiDownload size={16} /> Export
             </button>
-            <button onClick={handleDelete} className="action-btn trip-delete-btn">
+            <button
+              onClick={handleDelete}
+              className="action-btn trip-delete-btn"
+            >
               <FiTrash2 size={16} /> Delete Trip
             </button>
           </div>
@@ -372,35 +414,35 @@ const TripDetails = () => {
           className="budget-card"
         >
           <h3>💰 Budget Breakdown</h3>
-          {itinerary?.estimatedBudget ? (
+          {normalizedBudget ? (
             <div className="budget-list">
               <div className="budget-item">
                 <span>Accommodation</span>
                 <span className="budget-amount">
-                  {formatINR(itinerary.estimatedBudget.accommodation)}
+                  {formatINR(normalizedBudget.accommodation)}
                 </span>
               </div>
               <div className="budget-item">
                 <span>Food</span>
                 <span className="budget-amount">
-                  {formatINR(itinerary.estimatedBudget.food)}
+                  {formatINR(normalizedBudget.food)}
                 </span>
               </div>
               <div className="budget-item">
                 <span>Activities</span>
                 <span className="budget-amount">
-                  {formatINR(itinerary.estimatedBudget.activities)}
+                  {formatINR(normalizedBudget.activities)}
                 </span>
               </div>
               <div className="budget-item">
                 <span>Transport</span>
                 <span className="budget-amount">
-                  {formatINR(itinerary.estimatedBudget.transport)}
+                  {formatINR(normalizedBudget.transport)}
                 </span>
               </div>
               <div className="budget-total">
                 <span>Total</span>
-                <span>{formatINR(itinerary.estimatedBudget.total)}</span>
+                <span>{formatINR(normalizedBudget.total)}</span>
               </div>
             </div>
           ) : (

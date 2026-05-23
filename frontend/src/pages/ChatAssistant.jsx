@@ -7,10 +7,14 @@ import {
   FiMicOff,
   FiTrash2,
   FiHelpCircle,
+  FiCopy,
+  FiThumbsUp,
+  FiThumbsDown,
 } from "react-icons/fi";
 import { FaRobot } from "react-icons/fa";
 import { aiAPI } from "../services/api";
 import toast from "react-hot-toast";
+import "../styles/pages/ChatAssistant.css";
 
 const ChatAssistant = () => {
   const [messages, setMessages] = useState([
@@ -18,7 +22,7 @@ const ChatAssistant = () => {
       id: 1,
       type: "bot",
       content:
-        "Hello! I'm your AI travel assistant. Ask me anything about travel destinations, recommendations, budgeting, or local tips! ✈️",
+        "Hello! 👋 I'm your AI travel assistant. I can help you with:\n\n• ✈️ **Destination recommendations**\n• 💰 **Budget planning & tips**\n• 🏨 **Accommodation suggestions**\n• 🍜 **Local food & culture**\n• 🌤️ **Weather & best time to visit**\n• 🎒 **Packing guides**\n\nAsk me anything about your next adventure!",
       timestamp: new Date(),
     },
   ]);
@@ -34,6 +38,56 @@ const ChatAssistant = () => {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Format message content with markdown-like styling
+  const formatMessageContent = (content) => {
+    // Split content into paragraphs
+    const paragraphs = content.split(/\n\n/);
+
+    return paragraphs.map((paragraph, idx) => {
+      // Check for bullet points
+      if (paragraph.includes("•") || paragraph.includes("- ")) {
+        const lines = paragraph.split(/\n/);
+        const bulletItems = lines.filter(
+          (line) => line.includes("•") || line.includes("-"),
+        );
+        const beforeText = lines.find(
+          (line) => !line.includes("•") && !line.includes("-"),
+        );
+
+        return (
+          <div key={idx} className="message-paragraph">
+            {beforeText &&
+              !beforeText.includes("•") &&
+              !beforeText.includes("-") && <p>{beforeText}</p>}
+            <ul className="message-list">
+              {bulletItems.map((item, i) => (
+                <li key={i}>{item.replace(/^[•-]\s*/, "")}</li>
+              ))}
+            </ul>
+          </div>
+        );
+      }
+
+      // Check for bold text
+      const boldRegex = /\*\*(.*?)\*\*/g;
+      if (boldRegex.test(paragraph)) {
+        const parts = paragraph.split(boldRegex);
+        return (
+          <p key={idx}>
+            {parts.map((part, i) => {
+              if (i % 2 === 1) {
+                return <strong key={i}>{part}</strong>;
+              }
+              return part;
+            })}
+          </p>
+        );
+      }
+
+      return <p key={idx}>{paragraph}</p>;
+    });
   };
 
   const sendMessage = async () => {
@@ -93,6 +147,11 @@ const ChatAssistant = () => {
     toast.success("Chat cleared");
   };
 
+  const copyMessage = (content) => {
+    navigator.clipboard.writeText(content);
+    toast.success("Copied to clipboard!");
+  };
+
   const toggleVoiceInput = () => {
     if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
       const SpeechRecognition =
@@ -101,6 +160,7 @@ const ChatAssistant = () => {
 
       recognition.continuous = false;
       recognition.interimResults = false;
+      recognition.lang = "en-US";
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -183,10 +243,29 @@ const ChatAssistant = () => {
                       )}
                     </div>
                     <div className="message-content">
-                      <p>{message.content}</p>
-                      <span className="message-time">
-                        {new Date(message.timestamp).toLocaleTimeString()}
-                      </span>
+                      {message.type === "bot" ? (
+                        <div className="bot-message-text">
+                          {formatMessageContent(message.content)}
+                        </div>
+                      ) : (
+                        <p>{message.content}</p>
+                      )}
+                      <div className="message-footer">
+                        <span className="message-time">
+                          {new Date(message.timestamp).toLocaleTimeString()}
+                        </span>
+                        {message.type === "bot" && (
+                          <div className="message-actions">
+                            <button
+                              className="message-action-btn"
+                              onClick={() => copyMessage(message.content)}
+                              title="Copy"
+                            >
+                              <FiCopy size={12} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -221,6 +300,7 @@ const ChatAssistant = () => {
               <button
                 onClick={toggleVoiceInput}
                 className={`voice-btn ${isListening ? "listening" : ""}`}
+                title={isListening ? "Listening..." : "Voice input"}
               >
                 {isListening ? <FiMicOff size={18} /> : <FiMic size={18} />}
               </button>
@@ -237,9 +317,13 @@ const ChatAssistant = () => {
                 onClick={sendMessage}
                 disabled={!input.trim() || loading}
                 className="send-btn"
+                title="Send message"
               >
                 <FiSend size={18} />
               </button>
+            </div>
+            <div className="input-hint">
+              Press Enter to send, Shift+Enter for new line
             </div>
           </div>
         </div>

@@ -257,7 +257,7 @@ const Profile = () => {
     return `${score}%`;
   }
 
-  const recentTrips = trips.slice(0, 3);
+  const recentTrips = trips.slice(0, 4);
 
   return (
     <div className="profile-container">

@@ -17,8 +17,7 @@
   border-radius: 24px;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 180px);
-  min-height: 500px;
+  height: calc(100vh - 80px);
 }
 
 /* Chat Header */
@@ -356,6 +355,174 @@
 
 .tips-list li:last-child {
   border-bottom: none;
+}
+
+/* Add to ChatAssistant.css */
+
+/* Bot Message Styling */
+.bot-message-text {
+  line-height: 1.6;
+}
+
+.bot-message-text p {
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.bot-message-text strong {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.message-list {
+  margin: 8px 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.message-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.message-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Message Footer */
+.message-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+.message-actions {
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.message-bubble:hover .message-actions {
+  opacity: 1;
+}
+
+.message-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--gray);
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.message-action-btn:hover {
+  color: var(--primary-color);
+  background: var(--primary-color-10);
+}
+
+/* Enhanced Typing Indicator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+}
+
+.typing-indicator span:not(.typing-text) {
+  width: 8px;
+  height: 8px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.typing-text {
+  font-size: 12px;
+  color: var(--gray);
+  margin-left: 4px;
+}
+
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+/* Input Hint */
+.input-hint {
+  font-size: 11px;
+  color: var(--gray);
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* Message Bubble Enhancements */
+.message-bubble.user .message-content {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  color: white;
+}
+
+.message-bubble.user .message-time {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.message-bubble.bot .message-content {
+  background: var(--white);
+  border: 1px solid var(--primary-color-20);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .message-actions {
+    opacity: 1;
+  }
+
+  .message-list li {
+    font-size: 13px;
+  }
+
+  .input-hint {
+    font-size: 10px;
+  }
 }
 
 /* Scrollbar */

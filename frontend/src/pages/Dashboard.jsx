@@ -32,6 +32,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAllTripsModal, setShowAllTripsModal] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -85,20 +86,24 @@ const Dashboard = () => {
     lastDestination: trips.length > 0 ? trips[0]?.destination : "No trips yet",
   };
 
-  // Prepare chart data
-  const budgetData = trips.slice(0, 6).map((trip) => ({
-    name: trip.destination?.substring(0, 10),
+  // Prepare Bar Chart Data - Budget for each trip
+  const budgetData = trips.slice(0, 8).map((trip, index) => ({
+    name:
+      trip.destination?.length > 12
+        ? trip.destination.substring(0, 12) + "..."
+        : trip.destination,
     budget: trip.estimatedCost || trip.budget || 0,
+    fullName: trip.destination,
   }));
 
-  const destinationsData = trips.reduce((acc, trip) => {
-    acc[trip.destination] = (acc[trip.destination] || 0) + 1;
-    return acc;
-  }, {});
-
-  const pieData = Object.entries(destinationsData).map(([name, value]) => ({
-    name: name.length > 12 ? name.substring(0, 12) + "..." : name,
-    value,
+  // Prepare Pie Chart Data - Days for each trip
+  const daysData = trips.slice(0, 8).map((trip, index) => ({
+    name:
+      trip.destination?.length > 12
+        ? trip.destination.substring(0, 12) + "..."
+        : trip.destination,
+    days: trip.days,
+    fullName: trip.destination,
   }));
 
   const COLORS = [
@@ -138,6 +143,43 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
+      {/* Stats Row */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="stats-row"
+      >
+        <div className="stat-box">
+          <FiMapPin className="stat-icon-green" />
+          <div className="stat-info">
+            <span className="stat-value">{stats.totalTrips}</span>
+            <span className="stat-label">Total Trips</span>
+          </div>
+        </div>
+        <div className="stat-box">
+          <FiDollarSign className="stat-icon-green" />
+          <div className="stat-info">
+            <span className="stat-value">{formatINR(stats.totalBudget)}</span>
+            <span className="stat-label">Total Budget</span>
+          </div>
+        </div>
+        <div className="stat-box">
+          <FiCalendar className="stat-icon-green" />
+          <div className="stat-info">
+            <span className="stat-value">{stats.averageDays}</span>
+            <span className="stat-label">Avg Days/Trip</span>
+          </div>
+        </div>
+        <div className="stat-box">
+          <FiTrendingUp className="stat-icon-green" />
+          <div className="stat-info">
+            <span className="stat-value">{stats.lastDestination}</span>
+            <span className="stat-label">Last Destination</span>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Recent Trips Grid */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -147,12 +189,22 @@ const Dashboard = () => {
       >
         <div className="section-title">
           <h2>Recent Trips</h2>
-          <button
-            onClick={() => navigate("/create-trip")}
-            className="new-trip-btn"
-          >
-            + New Trip
-          </button>
+          <div className="section-buttons">
+            <button
+              onClick={() => navigate("/create-trip")}
+              className="new-trip-btn"
+            >
+              + New Trip
+            </button>
+            {trips.length > 6 && (
+              <button
+                onClick={() => setShowAllTripsModal(true)}
+                className="view-all-btn"
+              >
+                View All ({trips.length})
+              </button>
+            )}
+          </div>
         </div>
 
         {trips.length === 0 ? (
@@ -211,6 +263,60 @@ const Dashboard = () => {
         )}
       </motion.div>
 
+      {/* View All Trips Modal */}
+      {showAllTripsModal && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowAllTripsModal(false)}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>All Trips ({trips.length})</h2>
+              <button
+                className="modal-close"
+                onClick={() => setShowAllTripsModal(false)}
+              >
+                <FiX size={24} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="all-trips-grid">
+                {trips.map((trip) => (
+                  <div
+                    key={trip._id}
+                    className="modal-trip-card"
+                    onClick={() => {
+                      navigate(`/trip/${trip._id}`);
+                      setShowAllTripsModal(false);
+                    }}
+                  >
+                    <div className="modal-trip-icon">
+                      {trip.destination?.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="modal-trip-info">
+                      <h4>{trip.destination}</h4>
+                      <p>
+                        {trip.days} days •{" "}
+                        {formatINR(trip.estimatedCost || trip.budget)}
+                      </p>
+                    </div>
+                    <button
+                      className="modal-delete-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTrip(trip._id, e);
+                      }}
+                    >
+                      <FiTrash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Insights Section with Charts */}
       {trips.length > 0 && (
         <motion.div
@@ -223,66 +329,39 @@ const Dashboard = () => {
             <h2>Travel Insights</h2>
           </div>
 
-          {/* Stats Row */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="stats-row"
-          >
-            <div className="stat-box">
-              <FiMapPin className="stat-icon-green" />
-              <div className="stat-info">
-                <span className="stat-value">{stats.totalTrips}</span>
-                <span className="stat-label">Total Trips</span>
-              </div>
-            </div>
-            <div className="stat-box">
-              <FiDollarSign className="stat-icon-green" />
-              <div className="stat-info">
-                <span className="stat-value">
-                  {formatINR(stats.totalBudget)}
-                </span>
-                <span className="stat-label">Total Budget</span>
-              </div>
-            </div>
-            <div className="stat-box">
-              <FiCalendar className="stat-icon-green" />
-              <div className="stat-info">
-                <span className="stat-value">{stats.averageDays}</span>
-                <span className="stat-label">Avg Days/Trip</span>
-              </div>
-            </div>
-            <div className="stat-box">
-              <FiTrendingUp className="stat-icon-green" />
-              <div className="stat-info">
-                <span className="stat-value">{stats.lastDestination}</span>
-                <span className="stat-label">Last Destination</span>
-              </div>
-            </div>
-          </motion.div>
-
           <div className="charts-row">
-            {/* Budget Chart */}
+            {/* Bar Chart: Budget per Trip */}
             <div className="chart-card">
-              <h3>Budget Overview</h3>
+              <h3>Budget per Trip</h3>
               <div className="chart-wrapper">
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={budgetData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                    <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 11 }}
+                      interval={0}
+                      angle={-15}
+                      textAnchor="end"
+                      height={60}
+                    />
                     <YAxis tick={{ fontSize: 11 }} />
                     <Tooltip
                       formatter={(value) => formatINR(value)}
+                      labelFormatter={(label) => {
+                        const trip = budgetData.find((t) => t.name === label);
+                        return trip?.fullName || label;
+                      }}
                       contentStyle={{
                         backgroundColor: "white",
                         border: "1px solid #43a047",
                         borderRadius: "8px",
                       }}
                     />
+                    <Legend />
                     <Bar
                       dataKey="budget"
-                      fill="#43a047 "
+                      fill="#43a047"
                       name="Budget (₹)"
                       radius={[8, 8, 0, 0]}
                     />
@@ -291,31 +370,39 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Popular Destinations Chart */}
+            {/* Pie Chart: Days per Trip */}
             <div className="chart-card">
-              <h3>Popular Destinations</h3>
+              <h3>Days per Trip</h3>
               <div className="chart-wrapper">
                 <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
                     <Pie
-                      data={pieData}
+                      data={daysData}
                       cx="50%"
                       cy="50%"
-                      labelLine={false}
+                      labelLine={true}
                       label={({ name, percent }) =>
-                        `${name} (${(percent * 100).toFixed(0)}%)`
+                        `${name}: ${(percent * 100).toFixed(0)}%`
                       }
                       outerRadius={90}
-                      dataKey="value"
+                      dataKey="days"
+                      nameKey="name"
                     >
-                      {pieData.map((entry, index) => (
+                      {daysData.map((entry, index) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={COLORS[index % COLORS.length]}
                         />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip
+                      formatter={(value, name, props) => {
+                        return [
+                          `${value} days`,
+                          props.payload.fullName || name,
+                        ];
+                      }}
+                    />
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>
