@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -24,7 +23,6 @@ import NotFound from "./pages/NotFound";
 
 function App() {
   useEffect(() => {
-    // Check for dark mode preference
     const isDark = localStorage.getItem("darkMode") === "true";
     if (isDark) {
       document.documentElement.classList.add("dark");
@@ -32,7 +30,12 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <AuthProvider>
         <Toaster position="top-right" />
         <Routes>

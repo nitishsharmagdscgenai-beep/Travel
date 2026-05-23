@@ -62,7 +62,6 @@ const Profile = () => {
 
   const formatINR = (amount) => {
     return new Intl.NumberFormat("en-IN", {
-      style: "currency",
       currency: "INR",
       maximumFractionDigits: 0,
     }).format(amount);
@@ -237,7 +236,7 @@ const Profile = () => {
     },
     {
       label: "Avg Budget/Day",
-      value: formatINR(stats.averageBudgetPerDay),
+      value: `₹${formatINR(stats.averageBudgetPerDay)}`,
       icon: FiTrendingUp,
       color: "#0d530e",
     },
@@ -477,7 +476,7 @@ const Profile = () => {
                   <div>
                     <h3>{trip.destination}</h3>
                     <p>
-                      {trip.days} days •{" "}
+                      {trip.days} days • {"₹"}
                       {formatINR(trip.estimatedCost || trip.budget)}
                     </p>
                   </div>
@@ -618,9 +617,9 @@ const Profile = () => {
                   }
                   className="preference-select"
                 >
-                  <option value="budget">Budget (₹10k-30k per trip)</option>
-                  <option value="moderate">Moderate (₹30k-1L per trip)</option>
-                  <option value="luxury">Luxury (₹1L+ per trip)</option>
+                  <option value="budget">Budget (10k-30k per trip)</option>
+                  <option value="moderate">Moderate (30k-1L per trip)</option>
+                  <option value="luxury">Luxury (1L+ per trip)</option>
                 </select>
               </div>
             </div>

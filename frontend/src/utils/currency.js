@@ -1,6 +1,6 @@
 // Currency utility functions
 export const formatINR = (amount) => {
-  if (!amount && amount !== 0) return "₹0";
+  if (!amount && amount !== 0) return "0";
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
@@ -14,7 +14,6 @@ export const formatNumberINR = (amount) => {
 };
 
 export const getBudgetSuggestion = (destination, days) => {
-  // Common Indian destinations with average daily costs
   const suggestions = {
     goa: { budget: 3000, moderate: 6000, luxury: 15000 },
     manali: { budget: 2500, moderate: 5000, luxury: 12000 },

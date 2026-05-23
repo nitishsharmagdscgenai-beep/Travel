@@ -73,7 +73,6 @@ const CreateTrip = () => {
 
   const formatBudget = (value) => {
     return new Intl.NumberFormat("en-IN", {
-      style: "currency",
       currency: "INR",
       maximumFractionDigits: 0,
     }).format(value);
@@ -122,7 +121,7 @@ const CreateTrip = () => {
 
             <div className="form-group">
               <label>
-                <FiDollarSign /> Budget (₹ INR)
+                <FiDollarSign /> Budget
               </label>
               <input
                 type="number"
@@ -135,7 +134,7 @@ const CreateTrip = () => {
                 required
               />
               <small>
-                Current: {formatBudget(formData.budget)} for {formData.days}{" "}
+                Current: ₹{formatBudget(formData.budget)} for {formData.days}{" "}
                 days
               </small>
             </div>
@@ -145,7 +144,6 @@ const CreateTrip = () => {
           <div className="budget-range">
             <div className="budget-range-label">
               <span>Budget Range</span>
-              <span>{formatBudget(formData.budget)}</span>
             </div>
             <div className="budget-bar">
               <div

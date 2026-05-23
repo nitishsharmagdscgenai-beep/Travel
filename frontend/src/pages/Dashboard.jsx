@@ -41,7 +41,6 @@ const Dashboard = () => {
 
   const formatINR = (amount) => {
     return new Intl.NumberFormat("en-IN", {
-      style: "currency",
       currency: "INR",
       maximumFractionDigits: 0,
     }).format(amount);
@@ -362,7 +361,7 @@ const Dashboard = () => {
                     <Bar
                       dataKey="budget"
                       fill="#43a047"
-                      name="Budget (₹)"
+                      name="Budget"
                       radius={[8, 8, 0, 0]}
                     />
                   </BarChart>
