@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import {
   FiMapPin,
@@ -16,6 +16,8 @@ import {
   FiHome,
   FiMap,
   FiCamera,
+  FiShare2,
+  FiHeart,
 } from "react-icons/fi";
 import { tripAPI, weatherAPI } from "../services/api";
 import toast from "react-hot-toast";
@@ -32,9 +34,9 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// Simple geocoding function
-const getCoordinates = (destination) => {
-  const coordinates = {
+// Enhanced geocoding function
+const getCoordinates = async (destination) => {
+  const commonCoordinates = {
     paris: [48.8566, 2.3522],
     london: [51.5074, -0.1278],
     "new york": [40.7128, -74.006],
@@ -58,7 +60,28 @@ const getCoordinates = (destination) => {
   };
 
   const key = destination?.toLowerCase();
-  return coordinates[key] || [20.5937, 78.9629];
+  if (commonCoordinates[key]) {
+    return commonCoordinates[key];
+  }
+
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(destination)}&format=json&limit=1`,
+      {
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "TravelAI-App/1.0",
+        },
+      },
+    );
+    const data = await response.json();
+    if (data && data.length > 0) {
+      return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+    }
+  } catch (error) {
+    console.error("Geocoding error:", error);
+  }
+  return [20.5937, 78.9629];
 };
 
 const TripDetails = () => {
@@ -69,6 +92,7 @@ const TripDetails = () => {
   const [weather, setWeather] = useState(null);
   const [showMap, setShowMap] = useState(false);
   const [mapCoordinates, setMapCoordinates] = useState([20.5937, 78.9629]);
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     fetchTripDetails();
@@ -87,7 +111,7 @@ const TripDetails = () => {
       const response = await tripAPI.getById(id);
       setTrip(response.data);
       fetchWeather(response.data.destination);
-      const coords = getCoordinates(response.data.destination);
+      const coords = await getCoordinates(response.data.destination);
       setMapCoordinates(coords);
     } catch (error) {
       toast.error("Failed to load trip details");
@@ -146,37 +170,39 @@ const TripDetails = () => {
 
   return (
     <div className="trip-details-container">
-      {/* Header */}
+      {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="trip-header"
       >
-        <div className="trip-header-content">
-          <div>
-            <button onClick={() => navigate("/dashboard")} className="back-btn">
-              <FiArrowLeft size={16} /> Back to Dashboard
-            </button>
+        <button onClick={() => navigate("/dashboard")} className="back-btn">
+          <FiArrowLeft size={18} /> Back to Dashboard
+        </button>
+
+        <div className="trip-header-main">
+          <div className="trip-info-section">
             <h1 className="trip-title">{trip.destination}</h1>
             <div className="trip-meta">
-              <span>
+              <span className="meta-badge">
                 <FiCalendar size={14} /> {trip.days} days
               </span>
-              <span>
+              <span className="meta-badge">
                 <FiDollarSign size={14} />{" "}
                 {formatINR(trip.estimatedCost || trip.budget)}
               </span>
-              <span>
+              <span className="meta-badge">
                 <FiMapPin size={14} /> {trip.travelStyle} travel
               </span>
             </div>
           </div>
+
           <div className="trip-actions">
-            <button onClick={handleExport} className="export-btn">
-              <FiDownload size={14} /> Export
+            <button onClick={handleExport} className="action-btn trip-export-btn">
+              <FiDownload size={16} /> Export
             </button>
-            <button onClick={handleDelete} className="delete-btn">
-              <FiTrash2 size={14} /> Delete
+            <button onClick={handleDelete} className="action-btn trip-delete-btn">
+              <FiTrash2 size={16} /> Delete Trip
             </button>
           </div>
         </div>
@@ -191,7 +217,7 @@ const TripDetails = () => {
           className="weather-card"
         >
           <h2 className="section-title">
-            <FiSun className="section-icon" /> Current Weather in {weather.city}
+            <FiSun className="section-icon" /> Weather in {weather.city}
           </h2>
           <div className="weather-grid">
             <div className="weather-item">
@@ -205,7 +231,7 @@ const TripDetails = () => {
               <div className="weather-label">Humidity</div>
             </div>
             <div className="weather-item">
-              <div className="weather-value">{weather.windSpeed} m/s</div>
+              <div className="weather-value">{weather.windSpeed} km/h</div>
               <div className="weather-label">Wind Speed</div>
             </div>
             <div className="weather-item">
@@ -229,7 +255,9 @@ const TripDetails = () => {
         <div className="itinerary-list">
           {dailyItinerary.map((day, idx) => (
             <div key={idx} className="itinerary-day">
-              <div className="day-header">Day {day.day || idx + 1}</div>
+              <div className="day-header">
+                <span className="day-number">Day {day.day || idx + 1}</span>
+              </div>
               <div className="day-content">
                 {day.activities && day.activities.length > 0 && (
                   <div className="day-section">
@@ -286,7 +314,7 @@ const TripDetails = () => {
           className="recommendation-card"
         >
           <h3>
-            <FiCamera /> Recommended Places
+            <FiCamera size={18} /> Recommended Places
           </h3>
           <ul>
             {itinerary?.recommendedPlaces?.map((place, idx) => (
@@ -305,7 +333,7 @@ const TripDetails = () => {
           className="recommendation-card"
         >
           <h3>
-            <FiCoffee /> Food Suggestions
+            <FiCoffee size={18} /> Food Suggestions
           </h3>
           <ul>
             {itinerary?.foodSuggestions?.map((food, idx) => (
@@ -348,21 +376,27 @@ const TripDetails = () => {
             <div className="budget-list">
               <div className="budget-item">
                 <span>Accommodation</span>
-                <span>
+                <span className="budget-amount">
                   {formatINR(itinerary.estimatedBudget.accommodation)}
                 </span>
               </div>
               <div className="budget-item">
                 <span>Food</span>
-                <span>{formatINR(itinerary.estimatedBudget.food)}</span>
+                <span className="budget-amount">
+                  {formatINR(itinerary.estimatedBudget.food)}
+                </span>
               </div>
               <div className="budget-item">
                 <span>Activities</span>
-                <span>{formatINR(itinerary.estimatedBudget.activities)}</span>
+                <span className="budget-amount">
+                  {formatINR(itinerary.estimatedBudget.activities)}
+                </span>
               </div>
               <div className="budget-item">
                 <span>Transport</span>
-                <span>{formatINR(itinerary.estimatedBudget.transport)}</span>
+                <span className="budget-amount">
+                  {formatINR(itinerary.estimatedBudget.transport)}
+                </span>
               </div>
               <div className="budget-total">
                 <span>Total</span>
@@ -370,7 +404,7 @@ const TripDetails = () => {
               </div>
             </div>
           ) : (
-            <p>Budget breakdown not available</p>
+            <p className="no-data">Budget breakdown not available</p>
           )}
         </motion.div>
       </div>
@@ -397,8 +431,8 @@ const TripDetails = () => {
               zoomControl={true}
             >
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               <Marker position={mapCoordinates}>
                 <Popup>
